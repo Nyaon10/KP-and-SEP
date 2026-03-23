@@ -1,18 +1,27 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import QuickAdd from '../../components/QuickAdd'; // Import the new component
+import QuickAdd from '../../components/QuickAdd';
 
 interface Product {
   id: string;
   name: string;
   roast: string;
   price: number;
+  discountPrice?: number;
   categorySlug: string;
   image: string;
 }
 
 const PRODUCTS: Product[] = [
-  { id: 'b1', name: "Nothing But Love", roast: "Kerinci Natural Anaerob", price: 225000, categorySlug: "exotic-arabica-blends-series", image: "/images/SAB01-1.jpeg" },
+  { 
+    id: 'b1', 
+    name: "Nothing But Love", 
+    roast: "Kerinci Natural Anaerob", 
+    price: 225000, 
+    discountPrice: 185000, 
+    categorySlug: "exotic-arabica-blends-series", 
+    image: "/images/SAB01-1.jpeg" 
+  },
   { id: 'b2', name: "My Sweet Miracle", roast: "Kerinci Natural Anaerob", price: 225000, categorySlug: "exotic-arabica-blends-series", image: "/images/SAB02-1.jpeg" },
   { id: 's1', name: "When It's Love", roast: "Karo Natural Anaerob", price: 235000, categorySlug: "exotic-single-origin-series", image: "/images/ESO01-1.jpeg" },
   { id: 's2', name: "Berry Fields Forever", roast: "Kerinci Natural Anaerob", price: 235000, categorySlug: "exotic-single-origin-series", image: "/images/ESO02-1.jpeg" },
@@ -86,6 +95,11 @@ export default async function ShopPage({
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   />
+                  {product.discountPrice && (
+                    <div className="absolute top-4 right-4 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded uppercase z-10 shadow-sm">
+                      {Math.round((1 - product.discountPrice / product.price) * 100)}% OFF
+                    </div>
+                  )}
                 </div>
                 
                 <div className="p-6 flex flex-col flex-grow bg-white">
@@ -99,12 +113,27 @@ export default async function ShopPage({
                 </div>
               </Link>
 
-              {/* ACTION AREA: Integrated the QuickAdd Client Component */}
               <div className="p-6 pt-0 mt-auto relative z-20">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="font-mono text-lg font-bold text-stone-900">
-                    Rp {product.price.toLocaleString('id-ID')}
-                  </span>
+                  <div className="flex flex-col">
+                    {product.discountPrice ? (
+                      <>
+                        {/* CHANGED TO text-red-600 */}
+                        <span className="text-xs font-bold text-red-600 line-through">
+                          <span className="text-stone-500">
+                            Rp {product.price.toLocaleString('id-ID')}
+                          </span>
+                        </span>
+                        <span className="font-mono text-lg font-bold text-stone-900">
+                          Rp {product.discountPrice.toLocaleString('id-ID')}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="font-mono text-lg font-bold text-stone-900">
+                        Rp {product.price.toLocaleString('id-ID')}
+                      </span>
+                    )}
+                  </div>
                 </div>
                 
                 <QuickAdd product={product} />
@@ -113,7 +142,6 @@ export default async function ShopPage({
           ))}
         </div>
 
-        {/* Pagination */}
         {totalPages > 1 && (
           <div className="flex justify-center items-center gap-2 mt-8">
             {currentPage > 1 ? (

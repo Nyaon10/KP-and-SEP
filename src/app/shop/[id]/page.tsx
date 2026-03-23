@@ -4,10 +4,8 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-// 1. UPDATED HERE: Added the import for the Cart
 import { useCart } from '../../../context/CartContext'; 
 
-// --- 1. PRODUCT DATA ---
 const PRODUCTS = [
   { 
     id: 'b1', 
@@ -16,6 +14,7 @@ const PRODUCTS = [
     acidityLevel: 4,
     roastLevel: 2,
     price: 225000, 
+    discountPrice: 185000,
     categorySlug: "exotic-arabica-blends-series", 
     image: "/images/SAB01-1.jpeg", 
     gallery: ["/images/SAB01-1.jpeg", "/images/SAB01-2.jpeg", "/images/SAB01-3.jpeg", "/images/SAB01-4.jpeg", "/images/SAB01-5.jpeg"],
@@ -108,8 +107,6 @@ const PRODUCTS = [
   }
 ];
 
-// --- 2. COMPONENTS ---
-
 const BeanIcon = ({ filled }: { filled: boolean }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.5" className="w-5 h-5 rotate-12">
     <path strokeLinecap="round" strokeLinejoin="round" d="M12.0003 3.72546C8.96174 1.81795 4.96492 2.43987 2.71799 5.26457C0.424671 8.14768 0.459975 12.1836 2.86208 15.1676C4.5879 17.3115 7.43508 18.7503 10.3369 19.4488C11.069 19.625 11.8404 19.6276 12.5671 19.4382C16.5216 18.4073 19.9718 16.0655 21.8173 12.3486C23.6512 8.6553 23.3239 4.23034 21.1477 0.886719C18.1172 3.16194 14.8308 4.46196 11.4635 4.4927C11.7287 3.8035 11.9701 3.5392 12.0003 3.72546ZM12.0003 3.72546C13.4271 -0.521795 18.3134 -0.650173 21.1477 0.886719M12.5671 19.4382C13.292 21.2296 13.7483 23.1217 14.1888 25.0003M2.86208 15.1676C5.44671 17.5743 9.38107 17.8413 12.5671 19.4382M2.86208 15.1676C1.70135 18.4935 1.52241 22.3952 1.55593 25.0003" />
@@ -143,7 +140,6 @@ export default function ProductDetailPage() {
   const productId = params.id as string;
   const product = PRODUCTS.find((p) => p.id === productId);
 
-  // 2. UPDATED HERE: Added the hook to talk to the global cart
   const { addToCart } = useCart();
 
   const [activeImage, setActiveImage] = useState(product?.gallery?.[0] || product?.image || '');
@@ -180,7 +176,8 @@ export default function ProductDetailPage() {
 
   if (!product) return <div className="min-h-screen flex items-center justify-center bg-stone-50"><div className="text-center"><h2 className="text-2xl font-bold text-stone-900">Product not found</h2><Link href="/shop" className="text-amber-700 hover:underline mt-4 block">Back to Shop</Link></div></div>;
 
-  const totalPrice = product.price * quantity;
+  const activePrice = product.discountPrice || product.price;
+  const totalPrice = activePrice * quantity;
   const averageRating = reviews.length > 0 ? Math.round(reviews.reduce((acc, rev) => acc + rev.rating, 0) / reviews.length) : 0;
 
   const handleSubmitReview = (e: React.FormEvent) => {
@@ -209,6 +206,11 @@ export default function ProductDetailPage() {
           <div className="flex flex-col gap-6">
             <div className="aspect-square bg-white rounded-2xl border border-stone-200 relative overflow-hidden shadow-sm">
               <Image src={activeImage} alt={product.name} fill className="object-cover transition-all duration-500" priority />
+              {product.discountPrice && (
+                <div className="absolute top-4 right-4 bg-red-600 text-white text-sm font-bold px-3 py-1.5 rounded uppercase z-10 shadow-sm">
+                  {Math.round((1 - product.discountPrice / product.price) * 100)}% OFF
+                </div>
+              )}
             </div>
             <div className="grid grid-cols-5 gap-3">
               {(product.gallery || [product.image]).map((img, index) => (
@@ -223,7 +225,27 @@ export default function ProductDetailPage() {
               {reviews.length > 0 && <div className="flex items-center gap-2"><StarRating rating={averageRating} /><span className="text-xs font-bold text-stone-400">({reviews.length})</span></div>}
             </div>
             <h1 className="font-oswald text-4xl md:text-5xl font-bold text-stone-900 uppercase tracking-tight mb-2">{product.name}</h1>
-            <p className="text-2xl text-stone-900 font-mono font-bold mb-6">Rp {totalPrice.toLocaleString('id-ID')}</p>
+            
+            <div className="mb-6">
+              {product.discountPrice ? (
+                <div className="flex items-center gap-4">
+                  <span className="text-3xl text-stone-900 font-mono font-bold">
+                    Rp {totalPrice.toLocaleString('id-ID')}
+                  </span>
+                  {/* CHANGED TO text-red-600 */}
+                  <span className="text-lg font-bold text-red-600 line-through">
+                    <span className="text-stone-500">
+                      Rp {(product.price * quantity).toLocaleString('id-ID')}
+                    </span>
+                  </span>
+                </div>
+              ) : (
+                <span className="text-3xl text-stone-900 font-mono font-bold">
+                  Rp {totalPrice.toLocaleString('id-ID')}
+                </span>
+              )}
+            </div>
+
             <div className="flex flex-wrap gap-2 mb-6">
               {product.tastingNotes?.map((note) => (
                 <span key={note} className="px-3 py-1 bg-amber-50 text-amber-900 text-xs font-bold uppercase tracking-wider rounded-full border border-amber-100">{note}</span>
@@ -248,13 +270,12 @@ export default function ProductDetailPage() {
                 <button onClick={() => setQuantity(q => q + 1)} className="px-4 py-3 text-stone-500 hover:text-stone-900 transition-colors">+</button>
               </div>
 
-              {/* 3. UPDATED HERE: The button now sends data to our global CartContext */}
               <button 
                 onClick={() => {
                   addToCart({
                     id: product.id,
                     name: product.name,
-                    price: product.price,
+                    price: activePrice,
                     image: product.image,
                     quantity: quantity,
                     roast: product.roast,
@@ -272,7 +293,6 @@ export default function ProductDetailPage() {
           </div>
         </div>
 
-        {/* CUSTOMER REVIEWS SECTION - NO CHANGES NEEDED HERE */}
         <section className="pt-16 border-t border-stone-200">
           <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-12">
             <div>

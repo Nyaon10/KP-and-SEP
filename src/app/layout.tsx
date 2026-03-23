@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Oswald } from "next/font/google";
 import "./globals.css";
-import Navbar from "../components/Navbar";
+// 1. Import the new wrapper
+import LayoutWrapper from "../components/LayoutWrapper";
 import { CartProvider } from "../context/CartContext";
-import { useCart } from '../context/CartContext';
-import Footer from "../components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,18 +29,16 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      {/* 3. Add oswald.variable to the body class list */}
-      <body className={`${geistSans.variable} ${geistMono.variable} ${oswald.variable} antialiased`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} ${oswald.variable} antialiased flex flex-col min-h-screen`}>
         
-        {/* Wrap Navbar and children in the Provider */}
         <CartProvider>
-          <Navbar />
-            <div className="flex-grow">{children}</div>
-            <Footer />
+          {/* 2. Wrap children inside the LayoutWrapper */}
+          <LayoutWrapper>
+            {children}
+          </LayoutWrapper>
         </CartProvider>
 
       </body>
     </html>
   );
 }
-

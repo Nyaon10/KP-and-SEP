@@ -1,6 +1,16 @@
+"use client"; // 1. Add this to make it a client component
+
 import Link from 'next/link';
+import { usePathname } from 'next/navigation'; // 2. Import the hook
 
 export default function Footer() {
+  const pathname = usePathname(); // 3. Get the current URL path
+
+  // 4. THE FIX: Hide the footer if we are in the admin or manager portals
+  if (pathname.startsWith('/admin') || pathname.startsWith('/manager')) {
+    return null;
+  }
+
   return (
     <footer className="bg-white border-t border-stone-200 pt-16 pb-8 px-8">
       <div className="max-w-7xl mx-auto">

@@ -2,13 +2,16 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { useCart } from '../context/CartContext';
+import { usePathname } from 'next/navigation'; // IMPORT usePathname
+import { useCart } from '../context/CartContext'; // Adjust path if necessary
 
 export default function Navbar() {
+  const pathname = usePathname(); // GET CURRENT PATH
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [profilePic, setProfilePic] = useState<string | null>(null);
 
   const { totalItems } = useCart();
+  
   // We wrap the data loading into a reusable function
   const loadUserData = () => {
     const sessionActive = localStorage.getItem('wanst_active_session');
@@ -42,6 +45,11 @@ export default function Navbar() {
     setProfilePic(null); 
     window.location.href = "/login"; 
   };
+
+  // THE FIX: Hide the navbar completely if the user is in the /admin or /manager portals
+  if (pathname.startsWith('/admin') || pathname.startsWith('/manager')) {
+    return null;
+  }
 
   return (
     <nav className="bg-white border-b border-stone-200 sticky top-0 z-50">
@@ -89,6 +97,7 @@ export default function Navbar() {
             <Link href={isLoggedIn ? "/profile" : "/login"} className="hover:text-amber-700 transition-colors p-2 rounded-full hover:bg-stone-50 py-4 flex items-center">
               {isLoggedIn && profilePic ? (
                 <div className="w-8 h-8 rounded-full overflow-hidden border border-stone-300 shadow-sm">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={profilePic} alt="User Profile" className="w-full h-full object-cover" />
                 </div>
               ) : (
