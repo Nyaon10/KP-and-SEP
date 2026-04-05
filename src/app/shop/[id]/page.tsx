@@ -40,7 +40,11 @@ export default function ProductDetailPage() {
   const productId = params.id as string;
   
   const { addToCart } = useCart();
-  const { isFavourite, toggleFavourite } = useFavourites();
+  
+  // 1. Get the array of favourite IDs and the toggle function from Context
+  const { favourites, toggleFavourite } = useFavourites();
+  // 2. Check if THIS specific product's ID is inside the favourites array
+  const isFavorite = favourites.includes(productId);
 
   const [product, setProduct] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -62,7 +66,6 @@ export default function ProductDetailPage() {
         if (res.ok) {
           const dbData = await res.json();
           
-          // --- NEW: Apply the exact same date-checking logic here! ---
           const now = new Date();
           let activeDiscount = undefined;
 
@@ -84,7 +87,6 @@ export default function ProductDetailPage() {
               activeDiscount = Number(dbData.discount_price);
             }
           }
-          // ------------------------------------------------------------
 
           const formattedProduct = {
             id: dbData.id,
@@ -93,7 +95,7 @@ export default function ProductDetailPage() {
             acidityLevel: dbData.acidity_level || 3,
             roastLevel: dbData.roast_level || 3,
             price: Number(dbData.base_price || 0),
-            discountPrice: activeDiscount, // Use the validated activeDiscount!
+            discountPrice: activeDiscount,
             categorySlug: dbData.category_slug || "uncategorized",
             image: dbData.main_image || "/images/CB01-1.jpeg",
             gallery: [dbData.main_image || "/images/CB01-1.jpeg"], 
@@ -255,7 +257,15 @@ export default function ProductDetailPage() {
                 Add to Cart
               </button>
 
-              <button onClick={() => toggleFavourite(product.id)} className={`p-4 rounded-lg border flex items-center justify-center transition-all duration-200 active:scale-[0.90] ${isFavourite(product.id) ? 'bg-rose-50 border-rose-200 text-rose-500' : 'bg-white border-stone-300 text-stone-400 hover:text-rose-500 hover:border-rose-200 hover:bg-rose-50'}`} aria-label="Toggle Favorite" title={isFavourite(product.id) ? "Remove from Favorites" : "Add to Favorites"}><HeartIcon filled={isFavourite(product.id)} /></button>
+              {/* 3. Wire the button up using the isFavorite boolean we defined at the top! */}
+              <button 
+                onClick={() => toggleFavourite(product.id)} 
+                className={`p-4 rounded-lg border flex items-center justify-center transition-all duration-200 active:scale-[0.90] ${isFavorite ? 'bg-rose-50 border-rose-200 text-rose-500' : 'bg-white border-stone-300 text-stone-400 hover:text-rose-500 hover:border-rose-200 hover:bg-rose-50'}`} 
+                aria-label="Toggle Favorite" 
+                title={isFavorite ? "Remove from Favorites" : "Add to Favorites"}
+              >
+                <HeartIcon filled={isFavorite} />
+              </button>
             </div>
           </div>
         </div>

@@ -54,17 +54,17 @@ model finance_transactions {
 }
 
 model procurements {
-  id                String                  @id @default(uuid()) @db.VarChar(50)
-  supplier          String                  @db.VarChar(255)
-  items_description String                  @db.Text
+  id                String    @id @default(uuid()) @db.VarChar(50)
+  supplier          String    @db.VarChar(255)
+  items_description String    @db.Text
   total_cost        Int
-  logistics         procurements_logistics? @default(DELIVERY)
-  courier_service   String?                 @db.VarChar(100)
-  status            String?                 @default("ORDERED") @db.VarChar(50)
-  ordered_date      DateTime?               @db.Date
-  sent_date         DateTime?               @db.Date
-  arrival_date      DateTime?               @db.Date
-  created_at        DateTime                @default(now()) @db.Timestamp(0)
+  logistics         String    @db.VarChar(50)
+  courier_service   String?   @db.VarChar(100)
+  status            String    @default("ORDERED")
+  ordered_date      DateTime? @db.Date
+  sent_date         DateTime? @db.Date
+  arrival_date      DateTime? @db.Date
+  created_at        DateTime  @default(now()) @db.Timestamp(0)
 }
 
 model product_images {
@@ -77,29 +77,30 @@ model product_images {
 }
 
 model products {
-  id             String           @id @db.VarChar(50)
-  category_slug  String           @db.VarChar(100)
-  name           String           @db.VarChar(255)
-  origin         String?          @db.VarChar(255)
-  description    String?          @db.Text
-  tasting_notes  String?          @db.VarChar(255)
-  roast_profile  String?          @db.VarChar(100)
-  acidity_level  Int?             @default(1)
-  roast_level    Int?             @default(1)
-  cogs           Int?             @default(0)
-  base_price     Int?             @default(0)
-  stock          Int?             @default(0)
-  main_image     String?          @db.VarChar(500)
-  roast_log      String?          @db.Text
-  created_at     DateTime         @default(now()) @db.Timestamp(0)
-  updated_at     DateTime         @default(now()) @db.Timestamp(0)
-  discount_price Int?             @default(0)
-  is_on_sale     Boolean?         @default(false)
-  discount_start String?          @db.VarChar(10)
-  discount_end   String?          @db.VarChar(10)
-  order_items    order_items[]
-  product_images product_images[]
-  categories     categories       @relation(fields: [category_slug], references: [slug], map: "products_ibfk_1")
+  id                  String                @id @db.VarChar(50)
+  category_slug       String                @db.VarChar(100)
+  name                String                @db.VarChar(255)
+  origin              String?               @db.VarChar(255)
+  description         String?               @db.Text
+  tasting_notes       String?               @db.VarChar(255)
+  roast_profile       String?               @db.VarChar(100)
+  acidity_level       Int?                  @default(1)
+  roast_level         Int?                  @default(1)
+  cogs                Int?                  @default(0)
+  base_price          Int?                  @default(0)
+  stock               Int?                  @default(0)
+  main_image          String?               @db.VarChar(500)
+  roast_log           String?               @db.Text
+  created_at          DateTime              @default(now()) @db.Timestamp(0)
+  updated_at          DateTime              @default(now()) @db.Timestamp(0)
+  discount_price      Int?                  @default(0)
+  is_on_sale          Boolean?              @default(false)
+  discount_start      String?               @db.VarChar(10)
+  discount_end        String?               @db.VarChar(10)
+  customer_favourites customer_favourites[]
+  order_items         order_items[]
+  product_images      product_images[]
+  categories          categories            @relation(fields: [category_slug], references: [slug], map: "products_ibfk_1")
 
   @@index([category_slug], map: "category_slug")
 }
@@ -110,7 +111,7 @@ model transactions {
   type             transactions_type
   category         transactions_category
   amount           Int
-  description      String                @db.VarChar(255)
+  description      String?               @db.Text
   transaction_date DateTime              @db.Date
   created_at       DateTime              @default(now()) @db.Timestamp(0)
 }
@@ -127,14 +128,39 @@ model users {
 }
 
 model customers {
-  id            String   @id @db.VarChar(50)
-  name          String   @db.VarChar(255)
-  email         String   @unique(map: "email_unique") @db.VarChar(255)
-  phone         String?  @db.VarChar(50)
-  password      String   @db.VarChar(255)
-  status        String   @default("ACTIVE") @db.VarChar(20)
-  created_at    DateTime @default(now()) @db.Timestamp(0)
-  profile_image String?  @db.LongText
+  id                  String                @id @default(uuid()) @db.VarChar(50)
+  name                String                @db.VarChar(255)
+  email               String                @unique(map: "email_unique") @db.VarChar(255)
+  phone               String?               @db.VarChar(50)
+  password            String                @db.VarChar(255)
+  status              String                @default("ACTIVE") @db.VarChar(20)
+  created_at          DateTime              @default(now()) @db.Timestamp(0)
+  profile_image       String?               @db.LongText
+  customer_favourites customer_favourites[]
+}
+
+model customer_favourites {
+  id          String    @id @default(uuid()) @db.VarChar(50)
+  customer_id String    @db.VarChar(50)
+  product_id  String    @db.VarChar(50)
+  created_at  DateTime  @default(now()) @db.Timestamp(0)
+  customers   customers @relation(fields: [customer_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "customer_favourites_ibfk_1")
+  products    products  @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "customer_favourites_ibfk_2")
+
+  @@unique([customer_id, product_id], map: "unique_fav")
+  @@index([product_id], map: "product_id")
+}
+
+enum transactions_type {
+  CREDIT
+  DEBIT
+}
+
+enum transactions_category {
+  SALES
+  PROCUREMENT
+  OPERATIONAL
+  SHIPPING
 }
 
 enum orders_status {
@@ -151,21 +177,4 @@ enum users_role {
 enum users_status {
   ACTIVE
   SUSPENDED
-}
-
-enum transactions_type {
-  CREDIT
-  DEBIT
-}
-
-enum transactions_category {
-  SALES
-  PROCUREMENT
-  OPERATIONAL
-  SHIPPING
-}
-
-enum procurements_logistics {
-  DELIVERY
-  SELF_PICKUP @map("SELF-PICKUP")
 }

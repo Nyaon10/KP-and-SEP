@@ -235,6 +235,13 @@ exports.Prisma.CustomersScalarFieldEnum = {
   profile_image: 'profile_image'
 };
 
+exports.Prisma.Customer_favouritesScalarFieldEnum = {
+  id: 'id',
+  customer_id: 'customer_id',
+  product_id: 'product_id',
+  created_at: 'created_at'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -279,6 +286,7 @@ exports.Prisma.procurementsOrderByRelevanceFieldEnum = {
   id: 'id',
   supplier: 'supplier',
   items_description: 'items_description',
+  logistics: 'logistics',
   courier_service: 'courier_service',
   status: 'status'
 };
@@ -324,15 +332,16 @@ exports.Prisma.customersOrderByRelevanceFieldEnum = {
   status: 'status',
   profile_image: 'profile_image'
 };
+
+exports.Prisma.customer_favouritesOrderByRelevanceFieldEnum = {
+  id: 'id',
+  customer_id: 'customer_id',
+  product_id: 'product_id'
+};
 exports.orders_status = exports.$Enums.orders_status = {
   PENDING_PROCESSING: 'PENDING_PROCESSING',
   SHIPPED: 'SHIPPED',
   CANCELLED: 'CANCELLED'
-};
-
-exports.procurements_logistics = exports.$Enums.procurements_logistics = {
-  DELIVERY: 'DELIVERY',
-  SELF_PICKUP: 'SELF_PICKUP'
 };
 
 exports.transactions_type = exports.$Enums.transactions_type = {
@@ -367,7 +376,8 @@ exports.Prisma.ModelName = {
   products: 'products',
   transactions: 'transactions',
   users: 'users',
-  customers: 'customers'
+  customers: 'customers',
+  customer_favourites: 'customer_favourites'
 };
 
 /**

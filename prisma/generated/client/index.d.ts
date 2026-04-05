@@ -63,12 +63,35 @@ export type users = $Result.DefaultSelection<Prisma.$usersPayload>
  * 
  */
 export type customers = $Result.DefaultSelection<Prisma.$customersPayload>
+/**
+ * Model customer_favourites
+ * 
+ */
+export type customer_favourites = $Result.DefaultSelection<Prisma.$customer_favouritesPayload>
 
 /**
  * Enums
  */
 export namespace $Enums {
-  export const orders_status: {
+  export const transactions_type: {
+  CREDIT: 'CREDIT',
+  DEBIT: 'DEBIT'
+};
+
+export type transactions_type = (typeof transactions_type)[keyof typeof transactions_type]
+
+
+export const transactions_category: {
+  SALES: 'SALES',
+  PROCUREMENT: 'PROCUREMENT',
+  OPERATIONAL: 'OPERATIONAL',
+  SHIPPING: 'SHIPPING'
+};
+
+export type transactions_category = (typeof transactions_category)[keyof typeof transactions_category]
+
+
+export const orders_status: {
   PENDING_PROCESSING: 'PENDING_PROCESSING',
   SHIPPED: 'SHIPPED',
   CANCELLED: 'CANCELLED'
@@ -92,33 +115,15 @@ export const users_status: {
 
 export type users_status = (typeof users_status)[keyof typeof users_status]
 
-
-export const transactions_type: {
-  CREDIT: 'CREDIT',
-  DEBIT: 'DEBIT'
-};
-
-export type transactions_type = (typeof transactions_type)[keyof typeof transactions_type]
-
-
-export const transactions_category: {
-  SALES: 'SALES',
-  PROCUREMENT: 'PROCUREMENT',
-  OPERATIONAL: 'OPERATIONAL',
-  SHIPPING: 'SHIPPING'
-};
-
-export type transactions_category = (typeof transactions_category)[keyof typeof transactions_category]
-
-
-export const procurements_logistics: {
-  DELIVERY: 'DELIVERY',
-  SELF_PICKUP: 'SELF_PICKUP'
-};
-
-export type procurements_logistics = (typeof procurements_logistics)[keyof typeof procurements_logistics]
-
 }
+
+export type transactions_type = $Enums.transactions_type
+
+export const transactions_type: typeof $Enums.transactions_type
+
+export type transactions_category = $Enums.transactions_category
+
+export const transactions_category: typeof $Enums.transactions_category
 
 export type orders_status = $Enums.orders_status
 
@@ -131,18 +136,6 @@ export const users_role: typeof $Enums.users_role
 export type users_status = $Enums.users_status
 
 export const users_status: typeof $Enums.users_status
-
-export type transactions_type = $Enums.transactions_type
-
-export const transactions_type: typeof $Enums.transactions_type
-
-export type transactions_category = $Enums.transactions_category
-
-export const transactions_category: typeof $Enums.transactions_category
-
-export type procurements_logistics = $Enums.procurements_logistics
-
-export const procurements_logistics: typeof $Enums.procurements_logistics
 
 /**
  * ##  Prisma Client ʲˢ
@@ -364,6 +357,16 @@ export class PrismaClient<
     * ```
     */
   get customers(): Prisma.customersDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.customer_favourites`: Exposes CRUD operations for the **customer_favourites** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Customer_favourites
+    * const customer_favourites = await prisma.customer_favourites.findMany()
+    * ```
+    */
+  get customer_favourites(): Prisma.customer_favouritesDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -807,7 +810,8 @@ export namespace Prisma {
     products: 'products',
     transactions: 'transactions',
     users: 'users',
-    customers: 'customers'
+    customers: 'customers',
+    customer_favourites: 'customer_favourites'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -823,7 +827,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "categories" | "order_items" | "orders" | "finance_transactions" | "procurements" | "product_images" | "products" | "transactions" | "users" | "customers"
+      modelProps: "categories" | "order_items" | "orders" | "finance_transactions" | "procurements" | "product_images" | "products" | "transactions" | "users" | "customers" | "customer_favourites"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1487,6 +1491,72 @@ export namespace Prisma {
           }
         }
       }
+      customer_favourites: {
+        payload: Prisma.$customer_favouritesPayload<ExtArgs>
+        fields: Prisma.customer_favouritesFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.customer_favouritesFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$customer_favouritesPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.customer_favouritesFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$customer_favouritesPayload>
+          }
+          findFirst: {
+            args: Prisma.customer_favouritesFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$customer_favouritesPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.customer_favouritesFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$customer_favouritesPayload>
+          }
+          findMany: {
+            args: Prisma.customer_favouritesFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$customer_favouritesPayload>[]
+          }
+          create: {
+            args: Prisma.customer_favouritesCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$customer_favouritesPayload>
+          }
+          createMany: {
+            args: Prisma.customer_favouritesCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.customer_favouritesDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$customer_favouritesPayload>
+          }
+          update: {
+            args: Prisma.customer_favouritesUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$customer_favouritesPayload>
+          }
+          deleteMany: {
+            args: Prisma.customer_favouritesDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.customer_favouritesUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.customer_favouritesUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$customer_favouritesPayload>
+          }
+          aggregate: {
+            args: Prisma.Customer_favouritesAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCustomer_favourites>
+          }
+          groupBy: {
+            args: Prisma.customer_favouritesGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Customer_favouritesGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.customer_favouritesCountArgs<ExtArgs>
+            result: $Utils.Optional<Customer_favouritesCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1605,6 +1675,7 @@ export namespace Prisma {
     transactions?: transactionsOmit
     users?: usersOmit
     customers?: customersOmit
+    customer_favourites?: customer_favouritesOmit
   }
 
   /* Types for Logging */
@@ -1747,11 +1818,13 @@ export namespace Prisma {
    */
 
   export type ProductsCountOutputType = {
+    customer_favourites: number
     order_items: number
     product_images: number
   }
 
   export type ProductsCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    customer_favourites?: boolean | ProductsCountOutputTypeCountCustomer_favouritesArgs
     order_items?: boolean | ProductsCountOutputTypeCountOrder_itemsArgs
     product_images?: boolean | ProductsCountOutputTypeCountProduct_imagesArgs
   }
@@ -1770,6 +1843,13 @@ export namespace Prisma {
   /**
    * ProductsCountOutputType without action
    */
+  export type ProductsCountOutputTypeCountCustomer_favouritesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: customer_favouritesWhereInput
+  }
+
+  /**
+   * ProductsCountOutputType without action
+   */
   export type ProductsCountOutputTypeCountOrder_itemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: order_itemsWhereInput
   }
@@ -1779,6 +1859,37 @@ export namespace Prisma {
    */
   export type ProductsCountOutputTypeCountProduct_imagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: product_imagesWhereInput
+  }
+
+
+  /**
+   * Count Type CustomersCountOutputType
+   */
+
+  export type CustomersCountOutputType = {
+    customer_favourites: number
+  }
+
+  export type CustomersCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    customer_favourites?: boolean | CustomersCountOutputTypeCountCustomer_favouritesArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * CustomersCountOutputType without action
+   */
+  export type CustomersCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomersCountOutputType
+     */
+    select?: CustomersCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * CustomersCountOutputType without action
+   */
+  export type CustomersCountOutputTypeCountCustomer_favouritesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: customer_favouritesWhereInput
   }
 
 
@@ -5747,7 +5858,7 @@ export namespace Prisma {
     supplier: string | null
     items_description: string | null
     total_cost: number | null
-    logistics: $Enums.procurements_logistics | null
+    logistics: string | null
     courier_service: string | null
     status: string | null
     ordered_date: Date | null
@@ -5761,7 +5872,7 @@ export namespace Prisma {
     supplier: string | null
     items_description: string | null
     total_cost: number | null
-    logistics: $Enums.procurements_logistics | null
+    logistics: string | null
     courier_service: string | null
     status: string | null
     ordered_date: Date | null
@@ -5928,9 +6039,9 @@ export namespace Prisma {
     supplier: string
     items_description: string
     total_cost: number
-    logistics: $Enums.procurements_logistics | null
+    logistics: string
     courier_service: string | null
-    status: string | null
+    status: string
     ordered_date: Date | null
     sent_date: Date | null
     arrival_date: Date | null
@@ -5996,9 +6107,9 @@ export namespace Prisma {
       supplier: string
       items_description: string
       total_cost: number
-      logistics: $Enums.procurements_logistics | null
+      logistics: string
       courier_service: string | null
-      status: string | null
+      status: string
       ordered_date: Date | null
       sent_date: Date | null
       arrival_date: Date | null
@@ -6376,7 +6487,7 @@ export namespace Prisma {
     readonly supplier: FieldRef<"procurements", 'String'>
     readonly items_description: FieldRef<"procurements", 'String'>
     readonly total_cost: FieldRef<"procurements", 'Int'>
-    readonly logistics: FieldRef<"procurements", 'procurements_logistics'>
+    readonly logistics: FieldRef<"procurements", 'String'>
     readonly courier_service: FieldRef<"procurements", 'String'>
     readonly status: FieldRef<"procurements", 'String'>
     readonly ordered_date: FieldRef<"procurements", 'DateTime'>
@@ -7993,6 +8104,7 @@ export namespace Prisma {
     is_on_sale?: boolean
     discount_start?: boolean
     discount_end?: boolean
+    customer_favourites?: boolean | products$customer_favouritesArgs<ExtArgs>
     order_items?: boolean | products$order_itemsArgs<ExtArgs>
     product_images?: boolean | products$product_imagesArgs<ExtArgs>
     categories?: boolean | categoriesDefaultArgs<ExtArgs>
@@ -8026,6 +8138,7 @@ export namespace Prisma {
 
   export type productsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "category_slug" | "name" | "origin" | "description" | "tasting_notes" | "roast_profile" | "acidity_level" | "roast_level" | "cogs" | "base_price" | "stock" | "main_image" | "roast_log" | "created_at" | "updated_at" | "discount_price" | "is_on_sale" | "discount_start" | "discount_end", ExtArgs["result"]["products"]>
   export type productsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    customer_favourites?: boolean | products$customer_favouritesArgs<ExtArgs>
     order_items?: boolean | products$order_itemsArgs<ExtArgs>
     product_images?: boolean | products$product_imagesArgs<ExtArgs>
     categories?: boolean | categoriesDefaultArgs<ExtArgs>
@@ -8035,6 +8148,7 @@ export namespace Prisma {
   export type $productsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "products"
     objects: {
+      customer_favourites: Prisma.$customer_favouritesPayload<ExtArgs>[]
       order_items: Prisma.$order_itemsPayload<ExtArgs>[]
       product_images: Prisma.$product_imagesPayload<ExtArgs>[]
       categories: Prisma.$categoriesPayload<ExtArgs>
@@ -8400,6 +8514,7 @@ export namespace Prisma {
    */
   export interface Prisma__productsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    customer_favourites<T extends products$customer_favouritesArgs<ExtArgs> = {}>(args?: Subset<T, products$customer_favouritesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$customer_favouritesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     order_items<T extends products$order_itemsArgs<ExtArgs> = {}>(args?: Subset<T, products$order_itemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$order_itemsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     product_images<T extends products$product_imagesArgs<ExtArgs> = {}>(args?: Subset<T, products$product_imagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$product_imagesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     categories<T extends categoriesDefaultArgs<ExtArgs> = {}>(args?: Subset<T, categoriesDefaultArgs<ExtArgs>>): Prisma__categoriesClient<$Result.GetResult<Prisma.$categoriesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
@@ -8800,6 +8915,30 @@ export namespace Prisma {
   }
 
   /**
+   * products.customer_favourites
+   */
+  export type products$customer_favouritesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the customer_favourites
+     */
+    select?: customer_favouritesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the customer_favourites
+     */
+    omit?: customer_favouritesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: customer_favouritesInclude<ExtArgs> | null
+    where?: customer_favouritesWhereInput
+    orderBy?: customer_favouritesOrderByWithRelationInput | customer_favouritesOrderByWithRelationInput[]
+    cursor?: customer_favouritesWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Customer_favouritesScalarFieldEnum | Customer_favouritesScalarFieldEnum[]
+  }
+
+  /**
    * products.order_items
    */
   export type products$order_itemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -9055,7 +9194,7 @@ export namespace Prisma {
     type: $Enums.transactions_type
     category: $Enums.transactions_category
     amount: number
-    description: string
+    description: string | null
     transaction_date: Date
     created_at: Date
     _count: TransactionsCountAggregateOutputType | null
@@ -9114,7 +9253,7 @@ export namespace Prisma {
       type: $Enums.transactions_type
       category: $Enums.transactions_category
       amount: number
-      description: string
+      description: string | null
       transaction_date: Date
       created_at: Date
     }, ExtArgs["result"]["transactions"]>
@@ -10928,6 +11067,8 @@ export namespace Prisma {
     status?: boolean
     created_at?: boolean
     profile_image?: boolean
+    customer_favourites?: boolean | customers$customer_favouritesArgs<ExtArgs>
+    _count?: boolean | CustomersCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["customers"]>
 
 
@@ -10944,10 +11085,16 @@ export namespace Prisma {
   }
 
   export type customersOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "phone" | "password" | "status" | "created_at" | "profile_image", ExtArgs["result"]["customers"]>
+  export type customersInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    customer_favourites?: boolean | customers$customer_favouritesArgs<ExtArgs>
+    _count?: boolean | CustomersCountOutputTypeDefaultArgs<ExtArgs>
+  }
 
   export type $customersPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "customers"
-    objects: {}
+    objects: {
+      customer_favourites: Prisma.$customer_favouritesPayload<ExtArgs>[]
+    }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       name: string
@@ -11297,6 +11444,7 @@ export namespace Prisma {
    */
   export interface Prisma__customersClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    customer_favourites<T extends customers$customer_favouritesArgs<ExtArgs> = {}>(args?: Subset<T, customers$customer_favouritesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$customer_favouritesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -11351,6 +11499,10 @@ export namespace Prisma {
      */
     omit?: customersOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: customersInclude<ExtArgs> | null
+    /**
      * Filter, which customers to fetch.
      */
     where: customersWhereUniqueInput
@@ -11369,6 +11521,10 @@ export namespace Prisma {
      */
     omit?: customersOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: customersInclude<ExtArgs> | null
+    /**
      * Filter, which customers to fetch.
      */
     where: customersWhereUniqueInput
@@ -11386,6 +11542,10 @@ export namespace Prisma {
      * Omit specific fields from the customers
      */
     omit?: customersOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: customersInclude<ExtArgs> | null
     /**
      * Filter, which customers to fetch.
      */
@@ -11435,6 +11595,10 @@ export namespace Prisma {
      */
     omit?: customersOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: customersInclude<ExtArgs> | null
+    /**
      * Filter, which customers to fetch.
      */
     where?: customersWhereInput
@@ -11482,6 +11646,10 @@ export namespace Prisma {
      * Omit specific fields from the customers
      */
     omit?: customersOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: customersInclude<ExtArgs> | null
     /**
      * Filter, which customers to fetch.
      */
@@ -11531,6 +11699,10 @@ export namespace Prisma {
      */
     omit?: customersOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: customersInclude<ExtArgs> | null
+    /**
      * The data needed to create a customers.
      */
     data: XOR<customersCreateInput, customersUncheckedCreateInput>
@@ -11559,6 +11731,10 @@ export namespace Prisma {
      * Omit specific fields from the customers
      */
     omit?: customersOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: customersInclude<ExtArgs> | null
     /**
      * The data needed to update a customers.
      */
@@ -11600,6 +11776,10 @@ export namespace Prisma {
      */
     omit?: customersOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: customersInclude<ExtArgs> | null
+    /**
      * The filter to search for the customers to update in case it exists.
      */
     where: customersWhereUniqueInput
@@ -11626,6 +11806,10 @@ export namespace Prisma {
      */
     omit?: customersOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: customersInclude<ExtArgs> | null
+    /**
      * Filter which customers to delete.
      */
     where: customersWhereUniqueInput
@@ -11646,6 +11830,30 @@ export namespace Prisma {
   }
 
   /**
+   * customers.customer_favourites
+   */
+  export type customers$customer_favouritesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the customer_favourites
+     */
+    select?: customer_favouritesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the customer_favourites
+     */
+    omit?: customer_favouritesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: customer_favouritesInclude<ExtArgs> | null
+    where?: customer_favouritesWhereInput
+    orderBy?: customer_favouritesOrderByWithRelationInput | customer_favouritesOrderByWithRelationInput[]
+    cursor?: customer_favouritesWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Customer_favouritesScalarFieldEnum | Customer_favouritesScalarFieldEnum[]
+  }
+
+  /**
    * customers without action
    */
   export type customersDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -11657,6 +11865,937 @@ export namespace Prisma {
      * Omit specific fields from the customers
      */
     omit?: customersOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: customersInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model customer_favourites
+   */
+
+  export type AggregateCustomer_favourites = {
+    _count: Customer_favouritesCountAggregateOutputType | null
+    _min: Customer_favouritesMinAggregateOutputType | null
+    _max: Customer_favouritesMaxAggregateOutputType | null
+  }
+
+  export type Customer_favouritesMinAggregateOutputType = {
+    id: string | null
+    customer_id: string | null
+    product_id: string | null
+    created_at: Date | null
+  }
+
+  export type Customer_favouritesMaxAggregateOutputType = {
+    id: string | null
+    customer_id: string | null
+    product_id: string | null
+    created_at: Date | null
+  }
+
+  export type Customer_favouritesCountAggregateOutputType = {
+    id: number
+    customer_id: number
+    product_id: number
+    created_at: number
+    _all: number
+  }
+
+
+  export type Customer_favouritesMinAggregateInputType = {
+    id?: true
+    customer_id?: true
+    product_id?: true
+    created_at?: true
+  }
+
+  export type Customer_favouritesMaxAggregateInputType = {
+    id?: true
+    customer_id?: true
+    product_id?: true
+    created_at?: true
+  }
+
+  export type Customer_favouritesCountAggregateInputType = {
+    id?: true
+    customer_id?: true
+    product_id?: true
+    created_at?: true
+    _all?: true
+  }
+
+  export type Customer_favouritesAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which customer_favourites to aggregate.
+     */
+    where?: customer_favouritesWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of customer_favourites to fetch.
+     */
+    orderBy?: customer_favouritesOrderByWithRelationInput | customer_favouritesOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: customer_favouritesWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` customer_favourites from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` customer_favourites.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned customer_favourites
+    **/
+    _count?: true | Customer_favouritesCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Customer_favouritesMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Customer_favouritesMaxAggregateInputType
+  }
+
+  export type GetCustomer_favouritesAggregateType<T extends Customer_favouritesAggregateArgs> = {
+        [P in keyof T & keyof AggregateCustomer_favourites]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCustomer_favourites[P]>
+      : GetScalarType<T[P], AggregateCustomer_favourites[P]>
+  }
+
+
+
+
+  export type customer_favouritesGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: customer_favouritesWhereInput
+    orderBy?: customer_favouritesOrderByWithAggregationInput | customer_favouritesOrderByWithAggregationInput[]
+    by: Customer_favouritesScalarFieldEnum[] | Customer_favouritesScalarFieldEnum
+    having?: customer_favouritesScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Customer_favouritesCountAggregateInputType | true
+    _min?: Customer_favouritesMinAggregateInputType
+    _max?: Customer_favouritesMaxAggregateInputType
+  }
+
+  export type Customer_favouritesGroupByOutputType = {
+    id: string
+    customer_id: string
+    product_id: string
+    created_at: Date
+    _count: Customer_favouritesCountAggregateOutputType | null
+    _min: Customer_favouritesMinAggregateOutputType | null
+    _max: Customer_favouritesMaxAggregateOutputType | null
+  }
+
+  type GetCustomer_favouritesGroupByPayload<T extends customer_favouritesGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Customer_favouritesGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Customer_favouritesGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Customer_favouritesGroupByOutputType[P]>
+            : GetScalarType<T[P], Customer_favouritesGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type customer_favouritesSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    customer_id?: boolean
+    product_id?: boolean
+    created_at?: boolean
+    customers?: boolean | customersDefaultArgs<ExtArgs>
+    products?: boolean | productsDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["customer_favourites"]>
+
+
+
+  export type customer_favouritesSelectScalar = {
+    id?: boolean
+    customer_id?: boolean
+    product_id?: boolean
+    created_at?: boolean
+  }
+
+  export type customer_favouritesOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "customer_id" | "product_id" | "created_at", ExtArgs["result"]["customer_favourites"]>
+  export type customer_favouritesInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    customers?: boolean | customersDefaultArgs<ExtArgs>
+    products?: boolean | productsDefaultArgs<ExtArgs>
+  }
+
+  export type $customer_favouritesPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "customer_favourites"
+    objects: {
+      customers: Prisma.$customersPayload<ExtArgs>
+      products: Prisma.$productsPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      customer_id: string
+      product_id: string
+      created_at: Date
+    }, ExtArgs["result"]["customer_favourites"]>
+    composites: {}
+  }
+
+  type customer_favouritesGetPayload<S extends boolean | null | undefined | customer_favouritesDefaultArgs> = $Result.GetResult<Prisma.$customer_favouritesPayload, S>
+
+  type customer_favouritesCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<customer_favouritesFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Customer_favouritesCountAggregateInputType | true
+    }
+
+  export interface customer_favouritesDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['customer_favourites'], meta: { name: 'customer_favourites' } }
+    /**
+     * Find zero or one Customer_favourites that matches the filter.
+     * @param {customer_favouritesFindUniqueArgs} args - Arguments to find a Customer_favourites
+     * @example
+     * // Get one Customer_favourites
+     * const customer_favourites = await prisma.customer_favourites.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends customer_favouritesFindUniqueArgs>(args: SelectSubset<T, customer_favouritesFindUniqueArgs<ExtArgs>>): Prisma__customer_favouritesClient<$Result.GetResult<Prisma.$customer_favouritesPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Customer_favourites that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {customer_favouritesFindUniqueOrThrowArgs} args - Arguments to find a Customer_favourites
+     * @example
+     * // Get one Customer_favourites
+     * const customer_favourites = await prisma.customer_favourites.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends customer_favouritesFindUniqueOrThrowArgs>(args: SelectSubset<T, customer_favouritesFindUniqueOrThrowArgs<ExtArgs>>): Prisma__customer_favouritesClient<$Result.GetResult<Prisma.$customer_favouritesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Customer_favourites that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {customer_favouritesFindFirstArgs} args - Arguments to find a Customer_favourites
+     * @example
+     * // Get one Customer_favourites
+     * const customer_favourites = await prisma.customer_favourites.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends customer_favouritesFindFirstArgs>(args?: SelectSubset<T, customer_favouritesFindFirstArgs<ExtArgs>>): Prisma__customer_favouritesClient<$Result.GetResult<Prisma.$customer_favouritesPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Customer_favourites that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {customer_favouritesFindFirstOrThrowArgs} args - Arguments to find a Customer_favourites
+     * @example
+     * // Get one Customer_favourites
+     * const customer_favourites = await prisma.customer_favourites.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends customer_favouritesFindFirstOrThrowArgs>(args?: SelectSubset<T, customer_favouritesFindFirstOrThrowArgs<ExtArgs>>): Prisma__customer_favouritesClient<$Result.GetResult<Prisma.$customer_favouritesPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Customer_favourites that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {customer_favouritesFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Customer_favourites
+     * const customer_favourites = await prisma.customer_favourites.findMany()
+     * 
+     * // Get first 10 Customer_favourites
+     * const customer_favourites = await prisma.customer_favourites.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const customer_favouritesWithIdOnly = await prisma.customer_favourites.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends customer_favouritesFindManyArgs>(args?: SelectSubset<T, customer_favouritesFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$customer_favouritesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Customer_favourites.
+     * @param {customer_favouritesCreateArgs} args - Arguments to create a Customer_favourites.
+     * @example
+     * // Create one Customer_favourites
+     * const Customer_favourites = await prisma.customer_favourites.create({
+     *   data: {
+     *     // ... data to create a Customer_favourites
+     *   }
+     * })
+     * 
+     */
+    create<T extends customer_favouritesCreateArgs>(args: SelectSubset<T, customer_favouritesCreateArgs<ExtArgs>>): Prisma__customer_favouritesClient<$Result.GetResult<Prisma.$customer_favouritesPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Customer_favourites.
+     * @param {customer_favouritesCreateManyArgs} args - Arguments to create many Customer_favourites.
+     * @example
+     * // Create many Customer_favourites
+     * const customer_favourites = await prisma.customer_favourites.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends customer_favouritesCreateManyArgs>(args?: SelectSubset<T, customer_favouritesCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a Customer_favourites.
+     * @param {customer_favouritesDeleteArgs} args - Arguments to delete one Customer_favourites.
+     * @example
+     * // Delete one Customer_favourites
+     * const Customer_favourites = await prisma.customer_favourites.delete({
+     *   where: {
+     *     // ... filter to delete one Customer_favourites
+     *   }
+     * })
+     * 
+     */
+    delete<T extends customer_favouritesDeleteArgs>(args: SelectSubset<T, customer_favouritesDeleteArgs<ExtArgs>>): Prisma__customer_favouritesClient<$Result.GetResult<Prisma.$customer_favouritesPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Customer_favourites.
+     * @param {customer_favouritesUpdateArgs} args - Arguments to update one Customer_favourites.
+     * @example
+     * // Update one Customer_favourites
+     * const customer_favourites = await prisma.customer_favourites.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends customer_favouritesUpdateArgs>(args: SelectSubset<T, customer_favouritesUpdateArgs<ExtArgs>>): Prisma__customer_favouritesClient<$Result.GetResult<Prisma.$customer_favouritesPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Customer_favourites.
+     * @param {customer_favouritesDeleteManyArgs} args - Arguments to filter Customer_favourites to delete.
+     * @example
+     * // Delete a few Customer_favourites
+     * const { count } = await prisma.customer_favourites.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends customer_favouritesDeleteManyArgs>(args?: SelectSubset<T, customer_favouritesDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Customer_favourites.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {customer_favouritesUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Customer_favourites
+     * const customer_favourites = await prisma.customer_favourites.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends customer_favouritesUpdateManyArgs>(args: SelectSubset<T, customer_favouritesUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Customer_favourites.
+     * @param {customer_favouritesUpsertArgs} args - Arguments to update or create a Customer_favourites.
+     * @example
+     * // Update or create a Customer_favourites
+     * const customer_favourites = await prisma.customer_favourites.upsert({
+     *   create: {
+     *     // ... data to create a Customer_favourites
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Customer_favourites we want to update
+     *   }
+     * })
+     */
+    upsert<T extends customer_favouritesUpsertArgs>(args: SelectSubset<T, customer_favouritesUpsertArgs<ExtArgs>>): Prisma__customer_favouritesClient<$Result.GetResult<Prisma.$customer_favouritesPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Customer_favourites.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {customer_favouritesCountArgs} args - Arguments to filter Customer_favourites to count.
+     * @example
+     * // Count the number of Customer_favourites
+     * const count = await prisma.customer_favourites.count({
+     *   where: {
+     *     // ... the filter for the Customer_favourites we want to count
+     *   }
+     * })
+    **/
+    count<T extends customer_favouritesCountArgs>(
+      args?: Subset<T, customer_favouritesCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Customer_favouritesCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Customer_favourites.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Customer_favouritesAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Customer_favouritesAggregateArgs>(args: Subset<T, Customer_favouritesAggregateArgs>): Prisma.PrismaPromise<GetCustomer_favouritesAggregateType<T>>
+
+    /**
+     * Group by Customer_favourites.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {customer_favouritesGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends customer_favouritesGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: customer_favouritesGroupByArgs['orderBy'] }
+        : { orderBy?: customer_favouritesGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, customer_favouritesGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCustomer_favouritesGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the customer_favourites model
+   */
+  readonly fields: customer_favouritesFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for customer_favourites.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__customer_favouritesClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    customers<T extends customersDefaultArgs<ExtArgs> = {}>(args?: Subset<T, customersDefaultArgs<ExtArgs>>): Prisma__customersClient<$Result.GetResult<Prisma.$customersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    products<T extends productsDefaultArgs<ExtArgs> = {}>(args?: Subset<T, productsDefaultArgs<ExtArgs>>): Prisma__productsClient<$Result.GetResult<Prisma.$productsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the customer_favourites model
+   */
+  interface customer_favouritesFieldRefs {
+    readonly id: FieldRef<"customer_favourites", 'String'>
+    readonly customer_id: FieldRef<"customer_favourites", 'String'>
+    readonly product_id: FieldRef<"customer_favourites", 'String'>
+    readonly created_at: FieldRef<"customer_favourites", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * customer_favourites findUnique
+   */
+  export type customer_favouritesFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the customer_favourites
+     */
+    select?: customer_favouritesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the customer_favourites
+     */
+    omit?: customer_favouritesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: customer_favouritesInclude<ExtArgs> | null
+    /**
+     * Filter, which customer_favourites to fetch.
+     */
+    where: customer_favouritesWhereUniqueInput
+  }
+
+  /**
+   * customer_favourites findUniqueOrThrow
+   */
+  export type customer_favouritesFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the customer_favourites
+     */
+    select?: customer_favouritesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the customer_favourites
+     */
+    omit?: customer_favouritesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: customer_favouritesInclude<ExtArgs> | null
+    /**
+     * Filter, which customer_favourites to fetch.
+     */
+    where: customer_favouritesWhereUniqueInput
+  }
+
+  /**
+   * customer_favourites findFirst
+   */
+  export type customer_favouritesFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the customer_favourites
+     */
+    select?: customer_favouritesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the customer_favourites
+     */
+    omit?: customer_favouritesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: customer_favouritesInclude<ExtArgs> | null
+    /**
+     * Filter, which customer_favourites to fetch.
+     */
+    where?: customer_favouritesWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of customer_favourites to fetch.
+     */
+    orderBy?: customer_favouritesOrderByWithRelationInput | customer_favouritesOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for customer_favourites.
+     */
+    cursor?: customer_favouritesWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` customer_favourites from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` customer_favourites.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of customer_favourites.
+     */
+    distinct?: Customer_favouritesScalarFieldEnum | Customer_favouritesScalarFieldEnum[]
+  }
+
+  /**
+   * customer_favourites findFirstOrThrow
+   */
+  export type customer_favouritesFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the customer_favourites
+     */
+    select?: customer_favouritesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the customer_favourites
+     */
+    omit?: customer_favouritesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: customer_favouritesInclude<ExtArgs> | null
+    /**
+     * Filter, which customer_favourites to fetch.
+     */
+    where?: customer_favouritesWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of customer_favourites to fetch.
+     */
+    orderBy?: customer_favouritesOrderByWithRelationInput | customer_favouritesOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for customer_favourites.
+     */
+    cursor?: customer_favouritesWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` customer_favourites from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` customer_favourites.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of customer_favourites.
+     */
+    distinct?: Customer_favouritesScalarFieldEnum | Customer_favouritesScalarFieldEnum[]
+  }
+
+  /**
+   * customer_favourites findMany
+   */
+  export type customer_favouritesFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the customer_favourites
+     */
+    select?: customer_favouritesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the customer_favourites
+     */
+    omit?: customer_favouritesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: customer_favouritesInclude<ExtArgs> | null
+    /**
+     * Filter, which customer_favourites to fetch.
+     */
+    where?: customer_favouritesWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of customer_favourites to fetch.
+     */
+    orderBy?: customer_favouritesOrderByWithRelationInput | customer_favouritesOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing customer_favourites.
+     */
+    cursor?: customer_favouritesWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` customer_favourites from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` customer_favourites.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of customer_favourites.
+     */
+    distinct?: Customer_favouritesScalarFieldEnum | Customer_favouritesScalarFieldEnum[]
+  }
+
+  /**
+   * customer_favourites create
+   */
+  export type customer_favouritesCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the customer_favourites
+     */
+    select?: customer_favouritesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the customer_favourites
+     */
+    omit?: customer_favouritesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: customer_favouritesInclude<ExtArgs> | null
+    /**
+     * The data needed to create a customer_favourites.
+     */
+    data: XOR<customer_favouritesCreateInput, customer_favouritesUncheckedCreateInput>
+  }
+
+  /**
+   * customer_favourites createMany
+   */
+  export type customer_favouritesCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many customer_favourites.
+     */
+    data: customer_favouritesCreateManyInput | customer_favouritesCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * customer_favourites update
+   */
+  export type customer_favouritesUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the customer_favourites
+     */
+    select?: customer_favouritesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the customer_favourites
+     */
+    omit?: customer_favouritesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: customer_favouritesInclude<ExtArgs> | null
+    /**
+     * The data needed to update a customer_favourites.
+     */
+    data: XOR<customer_favouritesUpdateInput, customer_favouritesUncheckedUpdateInput>
+    /**
+     * Choose, which customer_favourites to update.
+     */
+    where: customer_favouritesWhereUniqueInput
+  }
+
+  /**
+   * customer_favourites updateMany
+   */
+  export type customer_favouritesUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update customer_favourites.
+     */
+    data: XOR<customer_favouritesUpdateManyMutationInput, customer_favouritesUncheckedUpdateManyInput>
+    /**
+     * Filter which customer_favourites to update
+     */
+    where?: customer_favouritesWhereInput
+    /**
+     * Limit how many customer_favourites to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * customer_favourites upsert
+   */
+  export type customer_favouritesUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the customer_favourites
+     */
+    select?: customer_favouritesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the customer_favourites
+     */
+    omit?: customer_favouritesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: customer_favouritesInclude<ExtArgs> | null
+    /**
+     * The filter to search for the customer_favourites to update in case it exists.
+     */
+    where: customer_favouritesWhereUniqueInput
+    /**
+     * In case the customer_favourites found by the `where` argument doesn't exist, create a new customer_favourites with this data.
+     */
+    create: XOR<customer_favouritesCreateInput, customer_favouritesUncheckedCreateInput>
+    /**
+     * In case the customer_favourites was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<customer_favouritesUpdateInput, customer_favouritesUncheckedUpdateInput>
+  }
+
+  /**
+   * customer_favourites delete
+   */
+  export type customer_favouritesDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the customer_favourites
+     */
+    select?: customer_favouritesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the customer_favourites
+     */
+    omit?: customer_favouritesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: customer_favouritesInclude<ExtArgs> | null
+    /**
+     * Filter which customer_favourites to delete.
+     */
+    where: customer_favouritesWhereUniqueInput
+  }
+
+  /**
+   * customer_favourites deleteMany
+   */
+  export type customer_favouritesDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which customer_favourites to delete
+     */
+    where?: customer_favouritesWhereInput
+    /**
+     * Limit how many customer_favourites to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * customer_favourites without action
+   */
+  export type customer_favouritesDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the customer_favourites
+     */
+    select?: customer_favouritesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the customer_favourites
+     */
+    omit?: customer_favouritesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: customer_favouritesInclude<ExtArgs> | null
   }
 
 
@@ -11819,6 +12958,16 @@ export namespace Prisma {
   export type CustomersScalarFieldEnum = (typeof CustomersScalarFieldEnum)[keyof typeof CustomersScalarFieldEnum]
 
 
+  export const Customer_favouritesScalarFieldEnum: {
+    id: 'id',
+    customer_id: 'customer_id',
+    product_id: 'product_id',
+    created_at: 'created_at'
+  };
+
+  export type Customer_favouritesScalarFieldEnum = (typeof Customer_favouritesScalarFieldEnum)[keyof typeof Customer_favouritesScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -11881,6 +13030,7 @@ export namespace Prisma {
     id: 'id',
     supplier: 'supplier',
     items_description: 'items_description',
+    logistics: 'logistics',
     courier_service: 'courier_service',
     status: 'status'
   };
@@ -11945,6 +13095,15 @@ export namespace Prisma {
   export type customersOrderByRelevanceFieldEnum = (typeof customersOrderByRelevanceFieldEnum)[keyof typeof customersOrderByRelevanceFieldEnum]
 
 
+  export const customer_favouritesOrderByRelevanceFieldEnum: {
+    id: 'id',
+    customer_id: 'customer_id',
+    product_id: 'product_id'
+  };
+
+  export type customer_favouritesOrderByRelevanceFieldEnum = (typeof customer_favouritesOrderByRelevanceFieldEnum)[keyof typeof customer_favouritesOrderByRelevanceFieldEnum]
+
+
   /**
    * Field references
    */
@@ -11975,13 +13134,6 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime'
    */
   export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
-    
-
-
-  /**
-   * Reference to a field of type 'procurements_logistics'
-   */
-  export type Enumprocurements_logisticsFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'procurements_logistics'>
     
 
 
@@ -12303,9 +13455,9 @@ export namespace Prisma {
     supplier?: StringFilter<"procurements"> | string
     items_description?: StringFilter<"procurements"> | string
     total_cost?: IntFilter<"procurements"> | number
-    logistics?: Enumprocurements_logisticsNullableFilter<"procurements"> | $Enums.procurements_logistics | null
+    logistics?: StringFilter<"procurements"> | string
     courier_service?: StringNullableFilter<"procurements"> | string | null
-    status?: StringNullableFilter<"procurements"> | string | null
+    status?: StringFilter<"procurements"> | string
     ordered_date?: DateTimeNullableFilter<"procurements"> | Date | string | null
     sent_date?: DateTimeNullableFilter<"procurements"> | Date | string | null
     arrival_date?: DateTimeNullableFilter<"procurements"> | Date | string | null
@@ -12317,9 +13469,9 @@ export namespace Prisma {
     supplier?: SortOrder
     items_description?: SortOrder
     total_cost?: SortOrder
-    logistics?: SortOrderInput | SortOrder
+    logistics?: SortOrder
     courier_service?: SortOrderInput | SortOrder
-    status?: SortOrderInput | SortOrder
+    status?: SortOrder
     ordered_date?: SortOrderInput | SortOrder
     sent_date?: SortOrderInput | SortOrder
     arrival_date?: SortOrderInput | SortOrder
@@ -12335,9 +13487,9 @@ export namespace Prisma {
     supplier?: StringFilter<"procurements"> | string
     items_description?: StringFilter<"procurements"> | string
     total_cost?: IntFilter<"procurements"> | number
-    logistics?: Enumprocurements_logisticsNullableFilter<"procurements"> | $Enums.procurements_logistics | null
+    logistics?: StringFilter<"procurements"> | string
     courier_service?: StringNullableFilter<"procurements"> | string | null
-    status?: StringNullableFilter<"procurements"> | string | null
+    status?: StringFilter<"procurements"> | string
     ordered_date?: DateTimeNullableFilter<"procurements"> | Date | string | null
     sent_date?: DateTimeNullableFilter<"procurements"> | Date | string | null
     arrival_date?: DateTimeNullableFilter<"procurements"> | Date | string | null
@@ -12349,9 +13501,9 @@ export namespace Prisma {
     supplier?: SortOrder
     items_description?: SortOrder
     total_cost?: SortOrder
-    logistics?: SortOrderInput | SortOrder
+    logistics?: SortOrder
     courier_service?: SortOrderInput | SortOrder
-    status?: SortOrderInput | SortOrder
+    status?: SortOrder
     ordered_date?: SortOrderInput | SortOrder
     sent_date?: SortOrderInput | SortOrder
     arrival_date?: SortOrderInput | SortOrder
@@ -12371,9 +13523,9 @@ export namespace Prisma {
     supplier?: StringWithAggregatesFilter<"procurements"> | string
     items_description?: StringWithAggregatesFilter<"procurements"> | string
     total_cost?: IntWithAggregatesFilter<"procurements"> | number
-    logistics?: Enumprocurements_logisticsNullableWithAggregatesFilter<"procurements"> | $Enums.procurements_logistics | null
+    logistics?: StringWithAggregatesFilter<"procurements"> | string
     courier_service?: StringNullableWithAggregatesFilter<"procurements"> | string | null
-    status?: StringNullableWithAggregatesFilter<"procurements"> | string | null
+    status?: StringWithAggregatesFilter<"procurements"> | string
     ordered_date?: DateTimeNullableWithAggregatesFilter<"procurements"> | Date | string | null
     sent_date?: DateTimeNullableWithAggregatesFilter<"procurements"> | Date | string | null
     arrival_date?: DateTimeNullableWithAggregatesFilter<"procurements"> | Date | string | null
@@ -12452,6 +13604,7 @@ export namespace Prisma {
     is_on_sale?: BoolNullableFilter<"products"> | boolean | null
     discount_start?: StringNullableFilter<"products"> | string | null
     discount_end?: StringNullableFilter<"products"> | string | null
+    customer_favourites?: Customer_favouritesListRelationFilter
     order_items?: Order_itemsListRelationFilter
     product_images?: Product_imagesListRelationFilter
     categories?: XOR<CategoriesScalarRelationFilter, categoriesWhereInput>
@@ -12478,6 +13631,7 @@ export namespace Prisma {
     is_on_sale?: SortOrderInput | SortOrder
     discount_start?: SortOrderInput | SortOrder
     discount_end?: SortOrderInput | SortOrder
+    customer_favourites?: customer_favouritesOrderByRelationAggregateInput
     order_items?: order_itemsOrderByRelationAggregateInput
     product_images?: product_imagesOrderByRelationAggregateInput
     categories?: categoriesOrderByWithRelationInput
@@ -12508,6 +13662,7 @@ export namespace Prisma {
     is_on_sale?: BoolNullableFilter<"products"> | boolean | null
     discount_start?: StringNullableFilter<"products"> | string | null
     discount_end?: StringNullableFilter<"products"> | string | null
+    customer_favourites?: Customer_favouritesListRelationFilter
     order_items?: Order_itemsListRelationFilter
     product_images?: Product_imagesListRelationFilter
     categories?: XOR<CategoriesScalarRelationFilter, categoriesWhereInput>
@@ -12576,7 +13731,7 @@ export namespace Prisma {
     type?: Enumtransactions_typeFilter<"transactions"> | $Enums.transactions_type
     category?: Enumtransactions_categoryFilter<"transactions"> | $Enums.transactions_category
     amount?: IntFilter<"transactions"> | number
-    description?: StringFilter<"transactions"> | string
+    description?: StringNullableFilter<"transactions"> | string | null
     transaction_date?: DateTimeFilter<"transactions"> | Date | string
     created_at?: DateTimeFilter<"transactions"> | Date | string
   }
@@ -12587,7 +13742,7 @@ export namespace Prisma {
     type?: SortOrder
     category?: SortOrder
     amount?: SortOrder
-    description?: SortOrder
+    description?: SortOrderInput | SortOrder
     transaction_date?: SortOrder
     created_at?: SortOrder
     _relevance?: transactionsOrderByRelevanceInput
@@ -12602,7 +13757,7 @@ export namespace Prisma {
     type?: Enumtransactions_typeFilter<"transactions"> | $Enums.transactions_type
     category?: Enumtransactions_categoryFilter<"transactions"> | $Enums.transactions_category
     amount?: IntFilter<"transactions"> | number
-    description?: StringFilter<"transactions"> | string
+    description?: StringNullableFilter<"transactions"> | string | null
     transaction_date?: DateTimeFilter<"transactions"> | Date | string
     created_at?: DateTimeFilter<"transactions"> | Date | string
   }, "id">
@@ -12613,7 +13768,7 @@ export namespace Prisma {
     type?: SortOrder
     category?: SortOrder
     amount?: SortOrder
-    description?: SortOrder
+    description?: SortOrderInput | SortOrder
     transaction_date?: SortOrder
     created_at?: SortOrder
     _count?: transactionsCountOrderByAggregateInput
@@ -12632,7 +13787,7 @@ export namespace Prisma {
     type?: Enumtransactions_typeWithAggregatesFilter<"transactions"> | $Enums.transactions_type
     category?: Enumtransactions_categoryWithAggregatesFilter<"transactions"> | $Enums.transactions_category
     amount?: IntWithAggregatesFilter<"transactions"> | number
-    description?: StringWithAggregatesFilter<"transactions"> | string
+    description?: StringNullableWithAggregatesFilter<"transactions"> | string | null
     transaction_date?: DateTimeWithAggregatesFilter<"transactions"> | Date | string
     created_at?: DateTimeWithAggregatesFilter<"transactions"> | Date | string
   }
@@ -12717,6 +13872,7 @@ export namespace Prisma {
     status?: StringFilter<"customers"> | string
     created_at?: DateTimeFilter<"customers"> | Date | string
     profile_image?: StringNullableFilter<"customers"> | string | null
+    customer_favourites?: Customer_favouritesListRelationFilter
   }
 
   export type customersOrderByWithRelationInput = {
@@ -12728,6 +13884,7 @@ export namespace Prisma {
     status?: SortOrder
     created_at?: SortOrder
     profile_image?: SortOrderInput | SortOrder
+    customer_favourites?: customer_favouritesOrderByRelationAggregateInput
     _relevance?: customersOrderByRelevanceInput
   }
 
@@ -12743,6 +13900,7 @@ export namespace Prisma {
     status?: StringFilter<"customers"> | string
     created_at?: DateTimeFilter<"customers"> | Date | string
     profile_image?: StringNullableFilter<"customers"> | string | null
+    customer_favourites?: Customer_favouritesListRelationFilter
   }, "id" | "email">
 
   export type customersOrderByWithAggregationInput = {
@@ -12771,6 +13929,61 @@ export namespace Prisma {
     status?: StringWithAggregatesFilter<"customers"> | string
     created_at?: DateTimeWithAggregatesFilter<"customers"> | Date | string
     profile_image?: StringNullableWithAggregatesFilter<"customers"> | string | null
+  }
+
+  export type customer_favouritesWhereInput = {
+    AND?: customer_favouritesWhereInput | customer_favouritesWhereInput[]
+    OR?: customer_favouritesWhereInput[]
+    NOT?: customer_favouritesWhereInput | customer_favouritesWhereInput[]
+    id?: StringFilter<"customer_favourites"> | string
+    customer_id?: StringFilter<"customer_favourites"> | string
+    product_id?: StringFilter<"customer_favourites"> | string
+    created_at?: DateTimeFilter<"customer_favourites"> | Date | string
+    customers?: XOR<CustomersScalarRelationFilter, customersWhereInput>
+    products?: XOR<ProductsScalarRelationFilter, productsWhereInput>
+  }
+
+  export type customer_favouritesOrderByWithRelationInput = {
+    id?: SortOrder
+    customer_id?: SortOrder
+    product_id?: SortOrder
+    created_at?: SortOrder
+    customers?: customersOrderByWithRelationInput
+    products?: productsOrderByWithRelationInput
+    _relevance?: customer_favouritesOrderByRelevanceInput
+  }
+
+  export type customer_favouritesWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    customer_id_product_id?: customer_favouritesCustomer_idProduct_idCompoundUniqueInput
+    AND?: customer_favouritesWhereInput | customer_favouritesWhereInput[]
+    OR?: customer_favouritesWhereInput[]
+    NOT?: customer_favouritesWhereInput | customer_favouritesWhereInput[]
+    customer_id?: StringFilter<"customer_favourites"> | string
+    product_id?: StringFilter<"customer_favourites"> | string
+    created_at?: DateTimeFilter<"customer_favourites"> | Date | string
+    customers?: XOR<CustomersScalarRelationFilter, customersWhereInput>
+    products?: XOR<ProductsScalarRelationFilter, productsWhereInput>
+  }, "id" | "customer_id_product_id">
+
+  export type customer_favouritesOrderByWithAggregationInput = {
+    id?: SortOrder
+    customer_id?: SortOrder
+    product_id?: SortOrder
+    created_at?: SortOrder
+    _count?: customer_favouritesCountOrderByAggregateInput
+    _max?: customer_favouritesMaxOrderByAggregateInput
+    _min?: customer_favouritesMinOrderByAggregateInput
+  }
+
+  export type customer_favouritesScalarWhereWithAggregatesInput = {
+    AND?: customer_favouritesScalarWhereWithAggregatesInput | customer_favouritesScalarWhereWithAggregatesInput[]
+    OR?: customer_favouritesScalarWhereWithAggregatesInput[]
+    NOT?: customer_favouritesScalarWhereWithAggregatesInput | customer_favouritesScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"customer_favourites"> | string
+    customer_id?: StringWithAggregatesFilter<"customer_favourites"> | string
+    product_id?: StringWithAggregatesFilter<"customer_favourites"> | string
+    created_at?: DateTimeWithAggregatesFilter<"customer_favourites"> | Date | string
   }
 
   export type categoriesCreateInput = {
@@ -13054,9 +14267,9 @@ export namespace Prisma {
     supplier: string
     items_description: string
     total_cost: number
-    logistics?: $Enums.procurements_logistics | null
+    logistics: string
     courier_service?: string | null
-    status?: string | null
+    status?: string
     ordered_date?: Date | string | null
     sent_date?: Date | string | null
     arrival_date?: Date | string | null
@@ -13068,9 +14281,9 @@ export namespace Prisma {
     supplier: string
     items_description: string
     total_cost: number
-    logistics?: $Enums.procurements_logistics | null
+    logistics: string
     courier_service?: string | null
-    status?: string | null
+    status?: string
     ordered_date?: Date | string | null
     sent_date?: Date | string | null
     arrival_date?: Date | string | null
@@ -13082,9 +14295,9 @@ export namespace Prisma {
     supplier?: StringFieldUpdateOperationsInput | string
     items_description?: StringFieldUpdateOperationsInput | string
     total_cost?: IntFieldUpdateOperationsInput | number
-    logistics?: NullableEnumprocurements_logisticsFieldUpdateOperationsInput | $Enums.procurements_logistics | null
+    logistics?: StringFieldUpdateOperationsInput | string
     courier_service?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
     ordered_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     sent_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     arrival_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -13096,9 +14309,9 @@ export namespace Prisma {
     supplier?: StringFieldUpdateOperationsInput | string
     items_description?: StringFieldUpdateOperationsInput | string
     total_cost?: IntFieldUpdateOperationsInput | number
-    logistics?: NullableEnumprocurements_logisticsFieldUpdateOperationsInput | $Enums.procurements_logistics | null
+    logistics?: StringFieldUpdateOperationsInput | string
     courier_service?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
     ordered_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     sent_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     arrival_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -13110,9 +14323,9 @@ export namespace Prisma {
     supplier: string
     items_description: string
     total_cost: number
-    logistics?: $Enums.procurements_logistics | null
+    logistics: string
     courier_service?: string | null
-    status?: string | null
+    status?: string
     ordered_date?: Date | string | null
     sent_date?: Date | string | null
     arrival_date?: Date | string | null
@@ -13124,9 +14337,9 @@ export namespace Prisma {
     supplier?: StringFieldUpdateOperationsInput | string
     items_description?: StringFieldUpdateOperationsInput | string
     total_cost?: IntFieldUpdateOperationsInput | number
-    logistics?: NullableEnumprocurements_logisticsFieldUpdateOperationsInput | $Enums.procurements_logistics | null
+    logistics?: StringFieldUpdateOperationsInput | string
     courier_service?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
     ordered_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     sent_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     arrival_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -13138,9 +14351,9 @@ export namespace Prisma {
     supplier?: StringFieldUpdateOperationsInput | string
     items_description?: StringFieldUpdateOperationsInput | string
     total_cost?: IntFieldUpdateOperationsInput | number
-    logistics?: NullableEnumprocurements_logisticsFieldUpdateOperationsInput | $Enums.procurements_logistics | null
+    logistics?: StringFieldUpdateOperationsInput | string
     courier_service?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
     ordered_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     sent_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     arrival_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -13205,6 +14418,7 @@ export namespace Prisma {
     is_on_sale?: boolean | null
     discount_start?: string | null
     discount_end?: string | null
+    customer_favourites?: customer_favouritesCreateNestedManyWithoutProductsInput
     order_items?: order_itemsCreateNestedManyWithoutProductsInput
     product_images?: product_imagesCreateNestedManyWithoutProductsInput
     categories: categoriesCreateNestedOneWithoutProductsInput
@@ -13231,6 +14445,7 @@ export namespace Prisma {
     is_on_sale?: boolean | null
     discount_start?: string | null
     discount_end?: string | null
+    customer_favourites?: customer_favouritesUncheckedCreateNestedManyWithoutProductsInput
     order_items?: order_itemsUncheckedCreateNestedManyWithoutProductsInput
     product_images?: product_imagesUncheckedCreateNestedManyWithoutProductsInput
   }
@@ -13255,6 +14470,7 @@ export namespace Prisma {
     is_on_sale?: NullableBoolFieldUpdateOperationsInput | boolean | null
     discount_start?: NullableStringFieldUpdateOperationsInput | string | null
     discount_end?: NullableStringFieldUpdateOperationsInput | string | null
+    customer_favourites?: customer_favouritesUpdateManyWithoutProductsNestedInput
     order_items?: order_itemsUpdateManyWithoutProductsNestedInput
     product_images?: product_imagesUpdateManyWithoutProductsNestedInput
     categories?: categoriesUpdateOneRequiredWithoutProductsNestedInput
@@ -13281,6 +14497,7 @@ export namespace Prisma {
     is_on_sale?: NullableBoolFieldUpdateOperationsInput | boolean | null
     discount_start?: NullableStringFieldUpdateOperationsInput | string | null
     discount_end?: NullableStringFieldUpdateOperationsInput | string | null
+    customer_favourites?: customer_favouritesUncheckedUpdateManyWithoutProductsNestedInput
     order_items?: order_itemsUncheckedUpdateManyWithoutProductsNestedInput
     product_images?: product_imagesUncheckedUpdateManyWithoutProductsNestedInput
   }
@@ -13359,7 +14576,7 @@ export namespace Prisma {
     type: $Enums.transactions_type
     category: $Enums.transactions_category
     amount: number
-    description: string
+    description?: string | null
     transaction_date: Date | string
     created_at?: Date | string
   }
@@ -13370,7 +14587,7 @@ export namespace Prisma {
     type: $Enums.transactions_type
     category: $Enums.transactions_category
     amount: number
-    description: string
+    description?: string | null
     transaction_date: Date | string
     created_at?: Date | string
   }
@@ -13381,7 +14598,7 @@ export namespace Prisma {
     type?: Enumtransactions_typeFieldUpdateOperationsInput | $Enums.transactions_type
     category?: Enumtransactions_categoryFieldUpdateOperationsInput | $Enums.transactions_category
     amount?: IntFieldUpdateOperationsInput | number
-    description?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     transaction_date?: DateTimeFieldUpdateOperationsInput | Date | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -13392,7 +14609,7 @@ export namespace Prisma {
     type?: Enumtransactions_typeFieldUpdateOperationsInput | $Enums.transactions_type
     category?: Enumtransactions_categoryFieldUpdateOperationsInput | $Enums.transactions_category
     amount?: IntFieldUpdateOperationsInput | number
-    description?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     transaction_date?: DateTimeFieldUpdateOperationsInput | Date | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -13403,7 +14620,7 @@ export namespace Prisma {
     type: $Enums.transactions_type
     category: $Enums.transactions_category
     amount: number
-    description: string
+    description?: string | null
     transaction_date: Date | string
     created_at?: Date | string
   }
@@ -13414,7 +14631,7 @@ export namespace Prisma {
     type?: Enumtransactions_typeFieldUpdateOperationsInput | $Enums.transactions_type
     category?: Enumtransactions_categoryFieldUpdateOperationsInput | $Enums.transactions_category
     amount?: IntFieldUpdateOperationsInput | number
-    description?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     transaction_date?: DateTimeFieldUpdateOperationsInput | Date | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -13425,7 +14642,7 @@ export namespace Prisma {
     type?: Enumtransactions_typeFieldUpdateOperationsInput | $Enums.transactions_type
     category?: Enumtransactions_categoryFieldUpdateOperationsInput | $Enums.transactions_category
     amount?: IntFieldUpdateOperationsInput | number
-    description?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     transaction_date?: DateTimeFieldUpdateOperationsInput | Date | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -13508,7 +14725,7 @@ export namespace Prisma {
   }
 
   export type customersCreateInput = {
-    id: string
+    id?: string
     name: string
     email: string
     phone?: string | null
@@ -13516,10 +14733,11 @@ export namespace Prisma {
     status?: string
     created_at?: Date | string
     profile_image?: string | null
+    customer_favourites?: customer_favouritesCreateNestedManyWithoutCustomersInput
   }
 
   export type customersUncheckedCreateInput = {
-    id: string
+    id?: string
     name: string
     email: string
     phone?: string | null
@@ -13527,6 +14745,7 @@ export namespace Prisma {
     status?: string
     created_at?: Date | string
     profile_image?: string | null
+    customer_favourites?: customer_favouritesUncheckedCreateNestedManyWithoutCustomersInput
   }
 
   export type customersUpdateInput = {
@@ -13538,6 +14757,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     profile_image?: NullableStringFieldUpdateOperationsInput | string | null
+    customer_favourites?: customer_favouritesUpdateManyWithoutCustomersNestedInput
   }
 
   export type customersUncheckedUpdateInput = {
@@ -13549,10 +14769,11 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     profile_image?: NullableStringFieldUpdateOperationsInput | string | null
+    customer_favourites?: customer_favouritesUncheckedUpdateManyWithoutCustomersNestedInput
   }
 
   export type customersCreateManyInput = {
-    id: string
+    id?: string
     name: string
     email: string
     phone?: string | null
@@ -13582,6 +14803,53 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     profile_image?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type customer_favouritesCreateInput = {
+    id?: string
+    created_at?: Date | string
+    customers: customersCreateNestedOneWithoutCustomer_favouritesInput
+    products: productsCreateNestedOneWithoutCustomer_favouritesInput
+  }
+
+  export type customer_favouritesUncheckedCreateInput = {
+    id?: string
+    customer_id: string
+    product_id: string
+    created_at?: Date | string
+  }
+
+  export type customer_favouritesUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    customers?: customersUpdateOneRequiredWithoutCustomer_favouritesNestedInput
+    products?: productsUpdateOneRequiredWithoutCustomer_favouritesNestedInput
+  }
+
+  export type customer_favouritesUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customer_id?: StringFieldUpdateOperationsInput | string
+    product_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type customer_favouritesCreateManyInput = {
+    id?: string
+    customer_id: string
+    product_id: string
+    created_at?: Date | string
+  }
+
+  export type customer_favouritesUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type customer_favouritesUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customer_id?: StringFieldUpdateOperationsInput | string
+    product_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -13952,13 +15220,6 @@ export namespace Prisma {
     amount?: SortOrder
   }
 
-  export type Enumprocurements_logisticsNullableFilter<$PrismaModel = never> = {
-    equals?: $Enums.procurements_logistics | Enumprocurements_logisticsFieldRefInput<$PrismaModel> | null
-    in?: $Enums.procurements_logistics[] | null
-    notIn?: $Enums.procurements_logistics[] | null
-    not?: NestedEnumprocurements_logisticsNullableFilter<$PrismaModel> | $Enums.procurements_logistics | null
-  }
-
   export type DateTimeNullableFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | null
@@ -14026,16 +15287,6 @@ export namespace Prisma {
     total_cost?: SortOrder
   }
 
-  export type Enumprocurements_logisticsNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.procurements_logistics | Enumprocurements_logisticsFieldRefInput<$PrismaModel> | null
-    in?: $Enums.procurements_logistics[] | null
-    notIn?: $Enums.procurements_logistics[] | null
-    not?: NestedEnumprocurements_logisticsNullableWithAggregatesFilter<$PrismaModel> | $Enums.procurements_logistics | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedEnumprocurements_logisticsNullableFilter<$PrismaModel>
-    _max?: NestedEnumprocurements_logisticsNullableFilter<$PrismaModel>
-  }
-
   export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | null
@@ -14087,6 +15338,12 @@ export namespace Prisma {
     not?: NestedBoolNullableFilter<$PrismaModel> | boolean | null
   }
 
+  export type Customer_favouritesListRelationFilter = {
+    every?: customer_favouritesWhereInput
+    some?: customer_favouritesWhereInput
+    none?: customer_favouritesWhereInput
+  }
+
   export type Product_imagesListRelationFilter = {
     every?: product_imagesWhereInput
     some?: product_imagesWhereInput
@@ -14096,6 +15353,10 @@ export namespace Prisma {
   export type CategoriesScalarRelationFilter = {
     is?: categoriesWhereInput
     isNot?: categoriesWhereInput
+  }
+
+  export type customer_favouritesOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type product_imagesOrderByRelationAggregateInput = {
@@ -14396,6 +15657,43 @@ export namespace Prisma {
     profile_image?: SortOrder
   }
 
+  export type CustomersScalarRelationFilter = {
+    is?: customersWhereInput
+    isNot?: customersWhereInput
+  }
+
+  export type customer_favouritesOrderByRelevanceInput = {
+    fields: customer_favouritesOrderByRelevanceFieldEnum | customer_favouritesOrderByRelevanceFieldEnum[]
+    sort: SortOrder
+    search: string
+  }
+
+  export type customer_favouritesCustomer_idProduct_idCompoundUniqueInput = {
+    customer_id: string
+    product_id: string
+  }
+
+  export type customer_favouritesCountOrderByAggregateInput = {
+    id?: SortOrder
+    customer_id?: SortOrder
+    product_id?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type customer_favouritesMaxOrderByAggregateInput = {
+    id?: SortOrder
+    customer_id?: SortOrder
+    product_id?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type customer_favouritesMinOrderByAggregateInput = {
+    id?: SortOrder
+    customer_id?: SortOrder
+    product_id?: SortOrder
+    created_at?: SortOrder
+  }
+
   export type productsCreateNestedManyWithoutCategoriesInput = {
     create?: XOR<productsCreateWithoutCategoriesInput, productsUncheckedCreateWithoutCategoriesInput> | productsCreateWithoutCategoriesInput[] | productsUncheckedCreateWithoutCategoriesInput[]
     connectOrCreate?: productsCreateOrConnectWithoutCategoriesInput | productsCreateOrConnectWithoutCategoriesInput[]
@@ -14540,10 +15838,6 @@ export namespace Prisma {
     deleteMany?: order_itemsScalarWhereInput | order_itemsScalarWhereInput[]
   }
 
-  export type NullableEnumprocurements_logisticsFieldUpdateOperationsInput = {
-    set?: $Enums.procurements_logistics | null
-  }
-
   export type NullableDateTimeFieldUpdateOperationsInput = {
     set?: Date | string | null
   }
@@ -14560,6 +15854,13 @@ export namespace Prisma {
     upsert?: productsUpsertWithoutProduct_imagesInput
     connect?: productsWhereUniqueInput
     update?: XOR<XOR<productsUpdateToOneWithWhereWithoutProduct_imagesInput, productsUpdateWithoutProduct_imagesInput>, productsUncheckedUpdateWithoutProduct_imagesInput>
+  }
+
+  export type customer_favouritesCreateNestedManyWithoutProductsInput = {
+    create?: XOR<customer_favouritesCreateWithoutProductsInput, customer_favouritesUncheckedCreateWithoutProductsInput> | customer_favouritesCreateWithoutProductsInput[] | customer_favouritesUncheckedCreateWithoutProductsInput[]
+    connectOrCreate?: customer_favouritesCreateOrConnectWithoutProductsInput | customer_favouritesCreateOrConnectWithoutProductsInput[]
+    createMany?: customer_favouritesCreateManyProductsInputEnvelope
+    connect?: customer_favouritesWhereUniqueInput | customer_favouritesWhereUniqueInput[]
   }
 
   export type order_itemsCreateNestedManyWithoutProductsInput = {
@@ -14582,6 +15883,13 @@ export namespace Prisma {
     connect?: categoriesWhereUniqueInput
   }
 
+  export type customer_favouritesUncheckedCreateNestedManyWithoutProductsInput = {
+    create?: XOR<customer_favouritesCreateWithoutProductsInput, customer_favouritesUncheckedCreateWithoutProductsInput> | customer_favouritesCreateWithoutProductsInput[] | customer_favouritesUncheckedCreateWithoutProductsInput[]
+    connectOrCreate?: customer_favouritesCreateOrConnectWithoutProductsInput | customer_favouritesCreateOrConnectWithoutProductsInput[]
+    createMany?: customer_favouritesCreateManyProductsInputEnvelope
+    connect?: customer_favouritesWhereUniqueInput | customer_favouritesWhereUniqueInput[]
+  }
+
   export type order_itemsUncheckedCreateNestedManyWithoutProductsInput = {
     create?: XOR<order_itemsCreateWithoutProductsInput, order_itemsUncheckedCreateWithoutProductsInput> | order_itemsCreateWithoutProductsInput[] | order_itemsUncheckedCreateWithoutProductsInput[]
     connectOrCreate?: order_itemsCreateOrConnectWithoutProductsInput | order_itemsCreateOrConnectWithoutProductsInput[]
@@ -14598,6 +15906,20 @@ export namespace Prisma {
 
   export type NullableBoolFieldUpdateOperationsInput = {
     set?: boolean | null
+  }
+
+  export type customer_favouritesUpdateManyWithoutProductsNestedInput = {
+    create?: XOR<customer_favouritesCreateWithoutProductsInput, customer_favouritesUncheckedCreateWithoutProductsInput> | customer_favouritesCreateWithoutProductsInput[] | customer_favouritesUncheckedCreateWithoutProductsInput[]
+    connectOrCreate?: customer_favouritesCreateOrConnectWithoutProductsInput | customer_favouritesCreateOrConnectWithoutProductsInput[]
+    upsert?: customer_favouritesUpsertWithWhereUniqueWithoutProductsInput | customer_favouritesUpsertWithWhereUniqueWithoutProductsInput[]
+    createMany?: customer_favouritesCreateManyProductsInputEnvelope
+    set?: customer_favouritesWhereUniqueInput | customer_favouritesWhereUniqueInput[]
+    disconnect?: customer_favouritesWhereUniqueInput | customer_favouritesWhereUniqueInput[]
+    delete?: customer_favouritesWhereUniqueInput | customer_favouritesWhereUniqueInput[]
+    connect?: customer_favouritesWhereUniqueInput | customer_favouritesWhereUniqueInput[]
+    update?: customer_favouritesUpdateWithWhereUniqueWithoutProductsInput | customer_favouritesUpdateWithWhereUniqueWithoutProductsInput[]
+    updateMany?: customer_favouritesUpdateManyWithWhereWithoutProductsInput | customer_favouritesUpdateManyWithWhereWithoutProductsInput[]
+    deleteMany?: customer_favouritesScalarWhereInput | customer_favouritesScalarWhereInput[]
   }
 
   export type order_itemsUpdateManyWithoutProductsNestedInput = {
@@ -14634,6 +15956,20 @@ export namespace Prisma {
     upsert?: categoriesUpsertWithoutProductsInput
     connect?: categoriesWhereUniqueInput
     update?: XOR<XOR<categoriesUpdateToOneWithWhereWithoutProductsInput, categoriesUpdateWithoutProductsInput>, categoriesUncheckedUpdateWithoutProductsInput>
+  }
+
+  export type customer_favouritesUncheckedUpdateManyWithoutProductsNestedInput = {
+    create?: XOR<customer_favouritesCreateWithoutProductsInput, customer_favouritesUncheckedCreateWithoutProductsInput> | customer_favouritesCreateWithoutProductsInput[] | customer_favouritesUncheckedCreateWithoutProductsInput[]
+    connectOrCreate?: customer_favouritesCreateOrConnectWithoutProductsInput | customer_favouritesCreateOrConnectWithoutProductsInput[]
+    upsert?: customer_favouritesUpsertWithWhereUniqueWithoutProductsInput | customer_favouritesUpsertWithWhereUniqueWithoutProductsInput[]
+    createMany?: customer_favouritesCreateManyProductsInputEnvelope
+    set?: customer_favouritesWhereUniqueInput | customer_favouritesWhereUniqueInput[]
+    disconnect?: customer_favouritesWhereUniqueInput | customer_favouritesWhereUniqueInput[]
+    delete?: customer_favouritesWhereUniqueInput | customer_favouritesWhereUniqueInput[]
+    connect?: customer_favouritesWhereUniqueInput | customer_favouritesWhereUniqueInput[]
+    update?: customer_favouritesUpdateWithWhereUniqueWithoutProductsInput | customer_favouritesUpdateWithWhereUniqueWithoutProductsInput[]
+    updateMany?: customer_favouritesUpdateManyWithWhereWithoutProductsInput | customer_favouritesUpdateManyWithWhereWithoutProductsInput[]
+    deleteMany?: customer_favouritesScalarWhereInput | customer_favouritesScalarWhereInput[]
   }
 
   export type order_itemsUncheckedUpdateManyWithoutProductsNestedInput = {
@@ -14678,6 +16014,76 @@ export namespace Prisma {
 
   export type NullableEnumusers_statusFieldUpdateOperationsInput = {
     set?: $Enums.users_status | null
+  }
+
+  export type customer_favouritesCreateNestedManyWithoutCustomersInput = {
+    create?: XOR<customer_favouritesCreateWithoutCustomersInput, customer_favouritesUncheckedCreateWithoutCustomersInput> | customer_favouritesCreateWithoutCustomersInput[] | customer_favouritesUncheckedCreateWithoutCustomersInput[]
+    connectOrCreate?: customer_favouritesCreateOrConnectWithoutCustomersInput | customer_favouritesCreateOrConnectWithoutCustomersInput[]
+    createMany?: customer_favouritesCreateManyCustomersInputEnvelope
+    connect?: customer_favouritesWhereUniqueInput | customer_favouritesWhereUniqueInput[]
+  }
+
+  export type customer_favouritesUncheckedCreateNestedManyWithoutCustomersInput = {
+    create?: XOR<customer_favouritesCreateWithoutCustomersInput, customer_favouritesUncheckedCreateWithoutCustomersInput> | customer_favouritesCreateWithoutCustomersInput[] | customer_favouritesUncheckedCreateWithoutCustomersInput[]
+    connectOrCreate?: customer_favouritesCreateOrConnectWithoutCustomersInput | customer_favouritesCreateOrConnectWithoutCustomersInput[]
+    createMany?: customer_favouritesCreateManyCustomersInputEnvelope
+    connect?: customer_favouritesWhereUniqueInput | customer_favouritesWhereUniqueInput[]
+  }
+
+  export type customer_favouritesUpdateManyWithoutCustomersNestedInput = {
+    create?: XOR<customer_favouritesCreateWithoutCustomersInput, customer_favouritesUncheckedCreateWithoutCustomersInput> | customer_favouritesCreateWithoutCustomersInput[] | customer_favouritesUncheckedCreateWithoutCustomersInput[]
+    connectOrCreate?: customer_favouritesCreateOrConnectWithoutCustomersInput | customer_favouritesCreateOrConnectWithoutCustomersInput[]
+    upsert?: customer_favouritesUpsertWithWhereUniqueWithoutCustomersInput | customer_favouritesUpsertWithWhereUniqueWithoutCustomersInput[]
+    createMany?: customer_favouritesCreateManyCustomersInputEnvelope
+    set?: customer_favouritesWhereUniqueInput | customer_favouritesWhereUniqueInput[]
+    disconnect?: customer_favouritesWhereUniqueInput | customer_favouritesWhereUniqueInput[]
+    delete?: customer_favouritesWhereUniqueInput | customer_favouritesWhereUniqueInput[]
+    connect?: customer_favouritesWhereUniqueInput | customer_favouritesWhereUniqueInput[]
+    update?: customer_favouritesUpdateWithWhereUniqueWithoutCustomersInput | customer_favouritesUpdateWithWhereUniqueWithoutCustomersInput[]
+    updateMany?: customer_favouritesUpdateManyWithWhereWithoutCustomersInput | customer_favouritesUpdateManyWithWhereWithoutCustomersInput[]
+    deleteMany?: customer_favouritesScalarWhereInput | customer_favouritesScalarWhereInput[]
+  }
+
+  export type customer_favouritesUncheckedUpdateManyWithoutCustomersNestedInput = {
+    create?: XOR<customer_favouritesCreateWithoutCustomersInput, customer_favouritesUncheckedCreateWithoutCustomersInput> | customer_favouritesCreateWithoutCustomersInput[] | customer_favouritesUncheckedCreateWithoutCustomersInput[]
+    connectOrCreate?: customer_favouritesCreateOrConnectWithoutCustomersInput | customer_favouritesCreateOrConnectWithoutCustomersInput[]
+    upsert?: customer_favouritesUpsertWithWhereUniqueWithoutCustomersInput | customer_favouritesUpsertWithWhereUniqueWithoutCustomersInput[]
+    createMany?: customer_favouritesCreateManyCustomersInputEnvelope
+    set?: customer_favouritesWhereUniqueInput | customer_favouritesWhereUniqueInput[]
+    disconnect?: customer_favouritesWhereUniqueInput | customer_favouritesWhereUniqueInput[]
+    delete?: customer_favouritesWhereUniqueInput | customer_favouritesWhereUniqueInput[]
+    connect?: customer_favouritesWhereUniqueInput | customer_favouritesWhereUniqueInput[]
+    update?: customer_favouritesUpdateWithWhereUniqueWithoutCustomersInput | customer_favouritesUpdateWithWhereUniqueWithoutCustomersInput[]
+    updateMany?: customer_favouritesUpdateManyWithWhereWithoutCustomersInput | customer_favouritesUpdateManyWithWhereWithoutCustomersInput[]
+    deleteMany?: customer_favouritesScalarWhereInput | customer_favouritesScalarWhereInput[]
+  }
+
+  export type customersCreateNestedOneWithoutCustomer_favouritesInput = {
+    create?: XOR<customersCreateWithoutCustomer_favouritesInput, customersUncheckedCreateWithoutCustomer_favouritesInput>
+    connectOrCreate?: customersCreateOrConnectWithoutCustomer_favouritesInput
+    connect?: customersWhereUniqueInput
+  }
+
+  export type productsCreateNestedOneWithoutCustomer_favouritesInput = {
+    create?: XOR<productsCreateWithoutCustomer_favouritesInput, productsUncheckedCreateWithoutCustomer_favouritesInput>
+    connectOrCreate?: productsCreateOrConnectWithoutCustomer_favouritesInput
+    connect?: productsWhereUniqueInput
+  }
+
+  export type customersUpdateOneRequiredWithoutCustomer_favouritesNestedInput = {
+    create?: XOR<customersCreateWithoutCustomer_favouritesInput, customersUncheckedCreateWithoutCustomer_favouritesInput>
+    connectOrCreate?: customersCreateOrConnectWithoutCustomer_favouritesInput
+    upsert?: customersUpsertWithoutCustomer_favouritesInput
+    connect?: customersWhereUniqueInput
+    update?: XOR<XOR<customersUpdateToOneWithWhereWithoutCustomer_favouritesInput, customersUpdateWithoutCustomer_favouritesInput>, customersUncheckedUpdateWithoutCustomer_favouritesInput>
+  }
+
+  export type productsUpdateOneRequiredWithoutCustomer_favouritesNestedInput = {
+    create?: XOR<productsCreateWithoutCustomer_favouritesInput, productsUncheckedCreateWithoutCustomer_favouritesInput>
+    connectOrCreate?: productsCreateOrConnectWithoutCustomer_favouritesInput
+    upsert?: productsUpsertWithoutCustomer_favouritesInput
+    connect?: productsWhereUniqueInput
+    update?: XOR<XOR<productsUpdateToOneWithWhereWithoutCustomer_favouritesInput, productsUpdateWithoutCustomer_favouritesInput>, productsUncheckedUpdateWithoutCustomer_favouritesInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -14864,13 +16270,6 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type NestedEnumprocurements_logisticsNullableFilter<$PrismaModel = never> = {
-    equals?: $Enums.procurements_logistics | Enumprocurements_logisticsFieldRefInput<$PrismaModel> | null
-    in?: $Enums.procurements_logistics[] | null
-    notIn?: $Enums.procurements_logistics[] | null
-    not?: NestedEnumprocurements_logisticsNullableFilter<$PrismaModel> | $Enums.procurements_logistics | null
-  }
-
   export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | null
@@ -14880,16 +16279,6 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
-  export type NestedEnumprocurements_logisticsNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.procurements_logistics | Enumprocurements_logisticsFieldRefInput<$PrismaModel> | null
-    in?: $Enums.procurements_logistics[] | null
-    notIn?: $Enums.procurements_logistics[] | null
-    not?: NestedEnumprocurements_logisticsNullableWithAggregatesFilter<$PrismaModel> | $Enums.procurements_logistics | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedEnumprocurements_logisticsNullableFilter<$PrismaModel>
-    _max?: NestedEnumprocurements_logisticsNullableFilter<$PrismaModel>
   }
 
   export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -15007,6 +16396,7 @@ export namespace Prisma {
     is_on_sale?: boolean | null
     discount_start?: string | null
     discount_end?: string | null
+    customer_favourites?: customer_favouritesCreateNestedManyWithoutProductsInput
     order_items?: order_itemsCreateNestedManyWithoutProductsInput
     product_images?: product_imagesCreateNestedManyWithoutProductsInput
   }
@@ -15031,6 +16421,7 @@ export namespace Prisma {
     is_on_sale?: boolean | null
     discount_start?: string | null
     discount_end?: string | null
+    customer_favourites?: customer_favouritesUncheckedCreateNestedManyWithoutProductsInput
     order_items?: order_itemsUncheckedCreateNestedManyWithoutProductsInput
     product_images?: product_imagesUncheckedCreateNestedManyWithoutProductsInput
   }
@@ -15142,6 +16533,7 @@ export namespace Prisma {
     is_on_sale?: boolean | null
     discount_start?: string | null
     discount_end?: string | null
+    customer_favourites?: customer_favouritesCreateNestedManyWithoutProductsInput
     product_images?: product_imagesCreateNestedManyWithoutProductsInput
     categories: categoriesCreateNestedOneWithoutProductsInput
   }
@@ -15167,6 +16559,7 @@ export namespace Prisma {
     is_on_sale?: boolean | null
     discount_start?: string | null
     discount_end?: string | null
+    customer_favourites?: customer_favouritesUncheckedCreateNestedManyWithoutProductsInput
     product_images?: product_imagesUncheckedCreateNestedManyWithoutProductsInput
   }
 
@@ -15247,6 +16640,7 @@ export namespace Prisma {
     is_on_sale?: NullableBoolFieldUpdateOperationsInput | boolean | null
     discount_start?: NullableStringFieldUpdateOperationsInput | string | null
     discount_end?: NullableStringFieldUpdateOperationsInput | string | null
+    customer_favourites?: customer_favouritesUpdateManyWithoutProductsNestedInput
     product_images?: product_imagesUpdateManyWithoutProductsNestedInput
     categories?: categoriesUpdateOneRequiredWithoutProductsNestedInput
   }
@@ -15272,6 +16666,7 @@ export namespace Prisma {
     is_on_sale?: NullableBoolFieldUpdateOperationsInput | boolean | null
     discount_start?: NullableStringFieldUpdateOperationsInput | string | null
     discount_end?: NullableStringFieldUpdateOperationsInput | string | null
+    customer_favourites?: customer_favouritesUncheckedUpdateManyWithoutProductsNestedInput
     product_images?: product_imagesUncheckedUpdateManyWithoutProductsNestedInput
   }
 
@@ -15348,6 +16743,7 @@ export namespace Prisma {
     is_on_sale?: boolean | null
     discount_start?: string | null
     discount_end?: string | null
+    customer_favourites?: customer_favouritesCreateNestedManyWithoutProductsInput
     order_items?: order_itemsCreateNestedManyWithoutProductsInput
     categories: categoriesCreateNestedOneWithoutProductsInput
   }
@@ -15373,6 +16769,7 @@ export namespace Prisma {
     is_on_sale?: boolean | null
     discount_start?: string | null
     discount_end?: string | null
+    customer_favourites?: customer_favouritesUncheckedCreateNestedManyWithoutProductsInput
     order_items?: order_itemsUncheckedCreateNestedManyWithoutProductsInput
   }
 
@@ -15412,6 +16809,7 @@ export namespace Prisma {
     is_on_sale?: NullableBoolFieldUpdateOperationsInput | boolean | null
     discount_start?: NullableStringFieldUpdateOperationsInput | string | null
     discount_end?: NullableStringFieldUpdateOperationsInput | string | null
+    customer_favourites?: customer_favouritesUpdateManyWithoutProductsNestedInput
     order_items?: order_itemsUpdateManyWithoutProductsNestedInput
     categories?: categoriesUpdateOneRequiredWithoutProductsNestedInput
   }
@@ -15437,7 +16835,30 @@ export namespace Prisma {
     is_on_sale?: NullableBoolFieldUpdateOperationsInput | boolean | null
     discount_start?: NullableStringFieldUpdateOperationsInput | string | null
     discount_end?: NullableStringFieldUpdateOperationsInput | string | null
+    customer_favourites?: customer_favouritesUncheckedUpdateManyWithoutProductsNestedInput
     order_items?: order_itemsUncheckedUpdateManyWithoutProductsNestedInput
+  }
+
+  export type customer_favouritesCreateWithoutProductsInput = {
+    id?: string
+    created_at?: Date | string
+    customers: customersCreateNestedOneWithoutCustomer_favouritesInput
+  }
+
+  export type customer_favouritesUncheckedCreateWithoutProductsInput = {
+    id?: string
+    customer_id: string
+    created_at?: Date | string
+  }
+
+  export type customer_favouritesCreateOrConnectWithoutProductsInput = {
+    where: customer_favouritesWhereUniqueInput
+    create: XOR<customer_favouritesCreateWithoutProductsInput, customer_favouritesUncheckedCreateWithoutProductsInput>
+  }
+
+  export type customer_favouritesCreateManyProductsInputEnvelope = {
+    data: customer_favouritesCreateManyProductsInput | customer_favouritesCreateManyProductsInput[]
+    skipDuplicates?: boolean
   }
 
   export type order_itemsCreateWithoutProductsInput = {
@@ -15497,6 +16918,32 @@ export namespace Prisma {
   export type categoriesCreateOrConnectWithoutProductsInput = {
     where: categoriesWhereUniqueInput
     create: XOR<categoriesCreateWithoutProductsInput, categoriesUncheckedCreateWithoutProductsInput>
+  }
+
+  export type customer_favouritesUpsertWithWhereUniqueWithoutProductsInput = {
+    where: customer_favouritesWhereUniqueInput
+    update: XOR<customer_favouritesUpdateWithoutProductsInput, customer_favouritesUncheckedUpdateWithoutProductsInput>
+    create: XOR<customer_favouritesCreateWithoutProductsInput, customer_favouritesUncheckedCreateWithoutProductsInput>
+  }
+
+  export type customer_favouritesUpdateWithWhereUniqueWithoutProductsInput = {
+    where: customer_favouritesWhereUniqueInput
+    data: XOR<customer_favouritesUpdateWithoutProductsInput, customer_favouritesUncheckedUpdateWithoutProductsInput>
+  }
+
+  export type customer_favouritesUpdateManyWithWhereWithoutProductsInput = {
+    where: customer_favouritesScalarWhereInput
+    data: XOR<customer_favouritesUpdateManyMutationInput, customer_favouritesUncheckedUpdateManyWithoutProductsInput>
+  }
+
+  export type customer_favouritesScalarWhereInput = {
+    AND?: customer_favouritesScalarWhereInput | customer_favouritesScalarWhereInput[]
+    OR?: customer_favouritesScalarWhereInput[]
+    NOT?: customer_favouritesScalarWhereInput | customer_favouritesScalarWhereInput[]
+    id?: StringFilter<"customer_favourites"> | string
+    customer_id?: StringFilter<"customer_favourites"> | string
+    product_id?: StringFilter<"customer_favourites"> | string
+    created_at?: DateTimeFilter<"customer_favourites"> | Date | string
   }
 
   export type order_itemsUpsertWithWhereUniqueWithoutProductsInput = {
@@ -15561,6 +17008,220 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
   }
 
+  export type customer_favouritesCreateWithoutCustomersInput = {
+    id?: string
+    created_at?: Date | string
+    products: productsCreateNestedOneWithoutCustomer_favouritesInput
+  }
+
+  export type customer_favouritesUncheckedCreateWithoutCustomersInput = {
+    id?: string
+    product_id: string
+    created_at?: Date | string
+  }
+
+  export type customer_favouritesCreateOrConnectWithoutCustomersInput = {
+    where: customer_favouritesWhereUniqueInput
+    create: XOR<customer_favouritesCreateWithoutCustomersInput, customer_favouritesUncheckedCreateWithoutCustomersInput>
+  }
+
+  export type customer_favouritesCreateManyCustomersInputEnvelope = {
+    data: customer_favouritesCreateManyCustomersInput | customer_favouritesCreateManyCustomersInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type customer_favouritesUpsertWithWhereUniqueWithoutCustomersInput = {
+    where: customer_favouritesWhereUniqueInput
+    update: XOR<customer_favouritesUpdateWithoutCustomersInput, customer_favouritesUncheckedUpdateWithoutCustomersInput>
+    create: XOR<customer_favouritesCreateWithoutCustomersInput, customer_favouritesUncheckedCreateWithoutCustomersInput>
+  }
+
+  export type customer_favouritesUpdateWithWhereUniqueWithoutCustomersInput = {
+    where: customer_favouritesWhereUniqueInput
+    data: XOR<customer_favouritesUpdateWithoutCustomersInput, customer_favouritesUncheckedUpdateWithoutCustomersInput>
+  }
+
+  export type customer_favouritesUpdateManyWithWhereWithoutCustomersInput = {
+    where: customer_favouritesScalarWhereInput
+    data: XOR<customer_favouritesUpdateManyMutationInput, customer_favouritesUncheckedUpdateManyWithoutCustomersInput>
+  }
+
+  export type customersCreateWithoutCustomer_favouritesInput = {
+    id?: string
+    name: string
+    email: string
+    phone?: string | null
+    password: string
+    status?: string
+    created_at?: Date | string
+    profile_image?: string | null
+  }
+
+  export type customersUncheckedCreateWithoutCustomer_favouritesInput = {
+    id?: string
+    name: string
+    email: string
+    phone?: string | null
+    password: string
+    status?: string
+    created_at?: Date | string
+    profile_image?: string | null
+  }
+
+  export type customersCreateOrConnectWithoutCustomer_favouritesInput = {
+    where: customersWhereUniqueInput
+    create: XOR<customersCreateWithoutCustomer_favouritesInput, customersUncheckedCreateWithoutCustomer_favouritesInput>
+  }
+
+  export type productsCreateWithoutCustomer_favouritesInput = {
+    id: string
+    name: string
+    origin?: string | null
+    description?: string | null
+    tasting_notes?: string | null
+    roast_profile?: string | null
+    acidity_level?: number | null
+    roast_level?: number | null
+    cogs?: number | null
+    base_price?: number | null
+    stock?: number | null
+    main_image?: string | null
+    roast_log?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    discount_price?: number | null
+    is_on_sale?: boolean | null
+    discount_start?: string | null
+    discount_end?: string | null
+    order_items?: order_itemsCreateNestedManyWithoutProductsInput
+    product_images?: product_imagesCreateNestedManyWithoutProductsInput
+    categories: categoriesCreateNestedOneWithoutProductsInput
+  }
+
+  export type productsUncheckedCreateWithoutCustomer_favouritesInput = {
+    id: string
+    category_slug: string
+    name: string
+    origin?: string | null
+    description?: string | null
+    tasting_notes?: string | null
+    roast_profile?: string | null
+    acidity_level?: number | null
+    roast_level?: number | null
+    cogs?: number | null
+    base_price?: number | null
+    stock?: number | null
+    main_image?: string | null
+    roast_log?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    discount_price?: number | null
+    is_on_sale?: boolean | null
+    discount_start?: string | null
+    discount_end?: string | null
+    order_items?: order_itemsUncheckedCreateNestedManyWithoutProductsInput
+    product_images?: product_imagesUncheckedCreateNestedManyWithoutProductsInput
+  }
+
+  export type productsCreateOrConnectWithoutCustomer_favouritesInput = {
+    where: productsWhereUniqueInput
+    create: XOR<productsCreateWithoutCustomer_favouritesInput, productsUncheckedCreateWithoutCustomer_favouritesInput>
+  }
+
+  export type customersUpsertWithoutCustomer_favouritesInput = {
+    update: XOR<customersUpdateWithoutCustomer_favouritesInput, customersUncheckedUpdateWithoutCustomer_favouritesInput>
+    create: XOR<customersCreateWithoutCustomer_favouritesInput, customersUncheckedCreateWithoutCustomer_favouritesInput>
+    where?: customersWhereInput
+  }
+
+  export type customersUpdateToOneWithWhereWithoutCustomer_favouritesInput = {
+    where?: customersWhereInput
+    data: XOR<customersUpdateWithoutCustomer_favouritesInput, customersUncheckedUpdateWithoutCustomer_favouritesInput>
+  }
+
+  export type customersUpdateWithoutCustomer_favouritesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    profile_image?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type customersUncheckedUpdateWithoutCustomer_favouritesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    profile_image?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type productsUpsertWithoutCustomer_favouritesInput = {
+    update: XOR<productsUpdateWithoutCustomer_favouritesInput, productsUncheckedUpdateWithoutCustomer_favouritesInput>
+    create: XOR<productsCreateWithoutCustomer_favouritesInput, productsUncheckedCreateWithoutCustomer_favouritesInput>
+    where?: productsWhereInput
+  }
+
+  export type productsUpdateToOneWithWhereWithoutCustomer_favouritesInput = {
+    where?: productsWhereInput
+    data: XOR<productsUpdateWithoutCustomer_favouritesInput, productsUncheckedUpdateWithoutCustomer_favouritesInput>
+  }
+
+  export type productsUpdateWithoutCustomer_favouritesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    origin?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    tasting_notes?: NullableStringFieldUpdateOperationsInput | string | null
+    roast_profile?: NullableStringFieldUpdateOperationsInput | string | null
+    acidity_level?: NullableIntFieldUpdateOperationsInput | number | null
+    roast_level?: NullableIntFieldUpdateOperationsInput | number | null
+    cogs?: NullableIntFieldUpdateOperationsInput | number | null
+    base_price?: NullableIntFieldUpdateOperationsInput | number | null
+    stock?: NullableIntFieldUpdateOperationsInput | number | null
+    main_image?: NullableStringFieldUpdateOperationsInput | string | null
+    roast_log?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    discount_price?: NullableIntFieldUpdateOperationsInput | number | null
+    is_on_sale?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    discount_start?: NullableStringFieldUpdateOperationsInput | string | null
+    discount_end?: NullableStringFieldUpdateOperationsInput | string | null
+    order_items?: order_itemsUpdateManyWithoutProductsNestedInput
+    product_images?: product_imagesUpdateManyWithoutProductsNestedInput
+    categories?: categoriesUpdateOneRequiredWithoutProductsNestedInput
+  }
+
+  export type productsUncheckedUpdateWithoutCustomer_favouritesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    category_slug?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    origin?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    tasting_notes?: NullableStringFieldUpdateOperationsInput | string | null
+    roast_profile?: NullableStringFieldUpdateOperationsInput | string | null
+    acidity_level?: NullableIntFieldUpdateOperationsInput | number | null
+    roast_level?: NullableIntFieldUpdateOperationsInput | number | null
+    cogs?: NullableIntFieldUpdateOperationsInput | number | null
+    base_price?: NullableIntFieldUpdateOperationsInput | number | null
+    stock?: NullableIntFieldUpdateOperationsInput | number | null
+    main_image?: NullableStringFieldUpdateOperationsInput | string | null
+    roast_log?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    discount_price?: NullableIntFieldUpdateOperationsInput | number | null
+    is_on_sale?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    discount_start?: NullableStringFieldUpdateOperationsInput | string | null
+    discount_end?: NullableStringFieldUpdateOperationsInput | string | null
+    order_items?: order_itemsUncheckedUpdateManyWithoutProductsNestedInput
+    product_images?: product_imagesUncheckedUpdateManyWithoutProductsNestedInput
+  }
+
   export type productsCreateManyCategoriesInput = {
     id: string
     name: string
@@ -15603,6 +17264,7 @@ export namespace Prisma {
     is_on_sale?: NullableBoolFieldUpdateOperationsInput | boolean | null
     discount_start?: NullableStringFieldUpdateOperationsInput | string | null
     discount_end?: NullableStringFieldUpdateOperationsInput | string | null
+    customer_favourites?: customer_favouritesUpdateManyWithoutProductsNestedInput
     order_items?: order_itemsUpdateManyWithoutProductsNestedInput
     product_images?: product_imagesUpdateManyWithoutProductsNestedInput
   }
@@ -15627,6 +17289,7 @@ export namespace Prisma {
     is_on_sale?: NullableBoolFieldUpdateOperationsInput | boolean | null
     discount_start?: NullableStringFieldUpdateOperationsInput | string | null
     discount_end?: NullableStringFieldUpdateOperationsInput | string | null
+    customer_favourites?: customer_favouritesUncheckedUpdateManyWithoutProductsNestedInput
     order_items?: order_itemsUncheckedUpdateManyWithoutProductsNestedInput
     product_images?: product_imagesUncheckedUpdateManyWithoutProductsNestedInput
   }
@@ -15684,6 +17347,12 @@ export namespace Prisma {
     price_at_time?: IntFieldUpdateOperationsInput | number
   }
 
+  export type customer_favouritesCreateManyProductsInput = {
+    id?: string
+    customer_id: string
+    created_at?: Date | string
+  }
+
   export type order_itemsCreateManyProductsInput = {
     id?: number
     order_id: string
@@ -15695,6 +17364,24 @@ export namespace Prisma {
   export type product_imagesCreateManyProductsInput = {
     id?: number
     image_url: string
+  }
+
+  export type customer_favouritesUpdateWithoutProductsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    customers?: customersUpdateOneRequiredWithoutCustomer_favouritesNestedInput
+  }
+
+  export type customer_favouritesUncheckedUpdateWithoutProductsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customer_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type customer_favouritesUncheckedUpdateManyWithoutProductsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customer_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type order_itemsUpdateWithoutProductsInput = {
@@ -15732,6 +17419,30 @@ export namespace Prisma {
   export type product_imagesUncheckedUpdateManyWithoutProductsInput = {
     id?: IntFieldUpdateOperationsInput | number
     image_url?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type customer_favouritesCreateManyCustomersInput = {
+    id?: string
+    product_id: string
+    created_at?: Date | string
+  }
+
+  export type customer_favouritesUpdateWithoutCustomersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    products?: productsUpdateOneRequiredWithoutCustomer_favouritesNestedInput
+  }
+
+  export type customer_favouritesUncheckedUpdateWithoutCustomersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    product_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type customer_favouritesUncheckedUpdateManyWithoutCustomersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    product_id?: StringFieldUpdateOperationsInput | string
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

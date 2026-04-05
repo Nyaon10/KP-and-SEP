@@ -13,45 +13,77 @@ const FavouritesContext = createContext<FavouritesContextType | undefined>(undef
 
 export function FavouritesProvider({ children }: { children: ReactNode }) {
   const [favourites, setFavourites] = useState<string[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  // 1. Checks if user is logged in, then pulls from DB or LocalStorage
+  const checkUserAndLoad = async () => {
+    const sessionActive = localStorage.getItem('wanst_active_session');
+    const userStr = localStorage.getItem('wanst_mock_user');
+    
+    if (sessionActive === 'true' && userStr) {
+      const user = JSON.parse(userStr);
+      setUserId(user.id);
+      
+      // Fetch from MySQL Database!
+      try {
+        const res = await fetch(`/api/storefront/favourites?customer_id=${user.id}`);
+        if (res.ok) {
+          const dbFavs = await res.json();
+          setFavourites(dbFavs);
+        }
+      } catch (err) {
+        console.error("Failed to load favourites from DB");
+      }
+    } else {
+      // Guest User / Logged out
+      setUserId(null);
+      const saved = localStorage.getItem('wanst-guest-favourites');
+      if (saved) {
+        setFavourites(JSON.parse(saved));
+      } else {
+        setFavourites([]);
+      }
+    }
+  };
 
   useEffect(() => {
-    // Collect all favourite IDs from localStorage
-    const loadFavourites = () => {
-      const found: string[] = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith('wanst-favorite-')) {
-          const isFavorited = JSON.parse(localStorage.getItem(key) || "false");
-          if (isFavorited) {
-            const productId = key.replace('wanst-favorite-', '');
-            found.push(productId);
-          }
-        }
-      }
-      setFavourites(found);
-      setIsLoaded(true);
-    };
-
-    loadFavourites();
+    checkUserAndLoad(); // Check on load
+    
+    // Wake up and check again the exact second someone logs in!
+    window.addEventListener('profileUpdated', checkUserAndLoad);
+    return () => window.removeEventListener('profileUpdated', checkUserAndLoad);
   }, []);
 
   const isFavourite = (id: string) => {
     return favourites.includes(id);
   };
 
-  const toggleFavourite = (id: string) => {
-    setFavourites((prev) => {
-      let nextFavs;
-      if (prev.includes(id)) {
-        nextFavs = prev.filter(fId => fId !== id);
-        localStorage.setItem(`wanst-favorite-${id}`, JSON.stringify(false));
-      } else {
-        nextFavs = [...prev, id];
-        localStorage.setItem(`wanst-favorite-${id}`, JSON.stringify(true));
+  // 2. Saves to MySQL if logged in, otherwise saves to LocalStorage
+  const toggleFavourite = async (productId: string) => {
+    // Optimistic UI Update (Changes the heart color instantly)
+    let newFavs: string[];
+    if (favourites.includes(productId)) {
+      newFavs = favourites.filter(id => id !== productId);
+    } else {
+      newFavs = [...favourites, productId];
+    }
+    setFavourites(newFavs);
+
+    if (userId) {
+      // ✅ SAVE TO MYSQL DATABASE
+      try {
+        await fetch('/api/storefront/favourites', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ customer_id: userId, product_id: productId })
+        });
+      } catch (err) {
+        console.error("Failed to sync favourite with DB");
       }
-      return nextFavs;
-    });
+    } else {
+      // 💾 SAVE TO GUEST LOCAL STORAGE
+      localStorage.setItem('wanst-guest-favourites', JSON.stringify(newFavs));
+    }
   };
 
   return (

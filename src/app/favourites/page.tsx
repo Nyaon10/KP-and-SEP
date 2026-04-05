@@ -17,24 +17,27 @@ export default function FavouritesPage() {
   const [favouriteProducts, setFavouriteProducts] = useState<any[]>([]);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
 
-  // 1. Fetch live products from DB for IDs saved in favourites
+  // 1. Fetch live products from DB in one single batch!
   useEffect(() => {
     let isMounted = true;
     const fetchFavourites = async () => {
-      // Just to verify if localStorage was empty from the start
       if (!favourites || favourites.length === 0) {
         setIsDataLoaded(true);
         return;
       }
 
       try {
-        const fetchedProducts = [];
-        for (const id of favourites) {
-          const res = await fetch(`/api/storefront/products/${id}`);
-          if (res.ok) {
-            const dbData = await res.json();
-            
-            const now = new Date();
+        const res = await fetch('/api/storefront/products/batch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ids: favourites })
+        });
+
+        if (res.ok) {
+          const dbDataArray = await res.json();
+          const now = new Date();
+          
+          const fetchedProducts = dbDataArray.map((dbData: any) => {
             let activeDiscount = undefined;
 
             if (dbData.is_on_sale && dbData.discount_price) {
@@ -53,7 +56,7 @@ export default function FavouritesPage() {
               }
             }
 
-            fetchedProducts.push({
+            return {
               id: dbData.id,
               name: dbData.name,
               roast: dbData.roast_profile || "Signature Roast",
@@ -61,13 +64,15 @@ export default function FavouritesPage() {
               discountPrice: activeDiscount,
               categorySlug: dbData.category_slug || "uncategorized",
               image: dbData.main_image || "/images/CB01-1.jpeg"
-            });
+            };
+          });
+          
+          if (isMounted) {
+            setFavouriteProducts(fetchedProducts);
+            setIsDataLoaded(true);
           }
-        }
-        
-        if (isMounted) {
-          setFavouriteProducts(fetchedProducts);
-          setIsDataLoaded(true);
+        } else {
+          if (isMounted) setIsDataLoaded(true);
         }
       } catch (err) {
         console.error("Error fetching favourites", err);
@@ -78,11 +83,9 @@ export default function FavouritesPage() {
     fetchFavourites();
     
     return () => { isMounted = false; };
-  // We only run this on initial load. Subsequent updates are handled via filters.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, []); // Initial load only
 
-  // 2. Sync UI state silently when favourites change (removing items)
+  // 2. Sync UI state silently when favourites change (removing items via Context)
   useEffect(() => {
     if (isDataLoaded) {
       setFavouriteProducts(prev => prev.filter(p => favourites.includes(p.id)));
