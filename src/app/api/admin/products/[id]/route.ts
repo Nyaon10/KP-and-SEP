@@ -10,7 +10,6 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       return NextResponse.json({ error: "Product ID is missing" }, { status: 400 });
     }
 
-    // MASSIVELY SIMPLIFIED: Everything saves to one table now!
     const updatedProduct = await prisma.products.update({
       where: { id: id },
       data: {
@@ -25,7 +24,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
         tasting_notes: body.tastingNotes,
         roast_log: body.roastLog,
         main_image: body.image, 
-        gallery: body.gallery, // <--- Just pass the array directly! 
+        gallery: body.gallery || [], // Updates JSON array directly
         updated_at: new Date(),
       }
     });
@@ -45,7 +44,6 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
   try {
     const { id } = await params;
 
-    // Just delete the product. The gallery JSON dies with it automatically!
     await prisma.products.delete({
       where: { id: id }
     });

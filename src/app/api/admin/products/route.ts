@@ -8,7 +8,7 @@ export async function GET() {
       orderBy: { created_at: 'desc' },
       include: {
         categories: true,
-        // ❌ REMOVED: product_images: true (since it doesn't exist anymore!)
+        // No more product_images here!
       }
     });
 
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     // Generate a unique ID
     const productId = `BEAN-${Date.now().toString().slice(-6)}`;
 
-    // MASSIVELY SIMPLIFIED: No transaction needed, just one direct create!
+    // Beautifully simple direct creation
     const newProduct = await prisma.products.create({
       data: {
         id: productId,
@@ -45,7 +45,7 @@ export async function POST(request: Request) {
         stock: parseInt(body.stock) || 0,
         roast_log: body.roastLog,
         main_image: body.image, 
-        gallery: body.gallery || [], // 👈 Just pass the JSON array directly!
+        gallery: body.gallery || [], // Saves JSON array directly
       },
     });
 

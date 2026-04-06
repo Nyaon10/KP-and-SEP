@@ -98,9 +98,11 @@ export default function ProductDetailPage() {
             discountPrice: activeDiscount,
             categorySlug: dbData.category_slug || "uncategorized",
             image: dbData.main_image || "/images/CB01-1.jpeg",
-            gallery: [dbData.main_image || "/images/CB01-1.jpeg"], 
+            gallery: dbData.gallery || [], // <--- The JSON Fix
             origin: dbData.origin || "Signature Blend",
-            tastingNotes: dbData.tasting_notes ? dbData.tasting_notes.split(',').map((n: string) => n.trim()) : [],
+            tastingNotes: dbData.tasting_notes 
+              ? dbData.tasting_notes.split(',').map((n: string) => n.trim()) 
+              : [],
             description: dbData.description || "A masterfully roasted coffee blend.",
           };
 
@@ -179,7 +181,8 @@ export default function ProductDetailPage() {
               )}
             </div>
             <div className="grid grid-cols-5 gap-3">
-              {(product.gallery || [product.image]).map((img: string, index: number) => (
+              {[product.image, ...(product.gallery || [])].filter(Boolean).map((img: string, index: number) => (
+                
                 <button key={index} onClick={() => setActiveImage(img)} className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${activeImage === img ? 'border-amber-700 ring-2 ring-amber-700/20' : 'border-stone-200 hover:border-stone-400'}`}>
                   {img && <Image src={img} alt={`${product.name} view ${index + 1}`} fill className="object-cover" />}
                 </button>

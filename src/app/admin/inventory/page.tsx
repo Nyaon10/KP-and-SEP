@@ -59,9 +59,7 @@ export default function InventoryPage() {
           tastingNotes: p.tasting_notes || '',
           description: p.description || '',
           roastLog: p.roast_log || '',
-          
-          // 👇 REPLACE LINES 62 & 63 WITH THIS SINGLE LINE:
-          gallery: p.gallery || [] 
+          gallery: p.gallery || [] // <--- The JSON Fix
         }));
 
         setProducts(formattedProducts);
