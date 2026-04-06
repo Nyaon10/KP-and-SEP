@@ -29,13 +29,27 @@ export async function POST(request: Request) {
       data: { last_login: new Date() }
     });
 
-    // 5. Return user data (In a real app, you'd set a Cookie/JWT here)
-    return NextResponse.json({
+    // 5. Create the response object FIRST
+    const response = NextResponse.json({
       id: user.id,
       name: user.name,
       role: user.role,
       email: user.email
     });
+
+    // 6. 🔥 THE MAGIC COOKIE 🔥
+    // Attach the role cookie so the Middleware can see it!
+    // 6. 🔥 THE MAGIC COOKIE 🔥
+    response.cookies.set({
+      name: 'wanst_user_role',
+      value: user.role || 'GUEST', // <-- THE FIX: Fallback to 'GUEST' if null
+      httpOnly: true, 
+      path: '/',      
+      maxAge: 60 * 60 * 24 * 7 
+    });
+
+    // Send it back to the frontend
+    return response;
 
   } catch (error) {
     console.error("Login Error:", error);
