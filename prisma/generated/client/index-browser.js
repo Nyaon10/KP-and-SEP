@@ -173,12 +173,6 @@ exports.Prisma.ProcurementsScalarFieldEnum = {
   created_at: 'created_at'
 };
 
-exports.Prisma.Product_imagesScalarFieldEnum = {
-  id: 'id',
-  product_id: 'product_id',
-  image_url: 'image_url'
-};
-
 exports.Prisma.ProductsScalarFieldEnum = {
   id: 'id',
   category_slug: 'category_slug',
@@ -193,6 +187,7 @@ exports.Prisma.ProductsScalarFieldEnum = {
   base_price: 'base_price',
   stock: 'stock',
   main_image: 'main_image',
+  gallery: 'gallery',
   roast_log: 'roast_log',
   created_at: 'created_at',
   updated_at: 'updated_at',
@@ -228,11 +223,12 @@ exports.Prisma.CustomersScalarFieldEnum = {
   id: 'id',
   name: 'name',
   email: 'email',
-  phone: 'phone',
   password: 'password',
+  phone: 'phone',
+  profile_image: 'profile_image',
   status: 'status',
   created_at: 'created_at',
-  profile_image: 'profile_image'
+  last_login: 'last_login'
 };
 
 exports.Prisma.Customer_favouritesScalarFieldEnum = {
@@ -242,9 +238,26 @@ exports.Prisma.Customer_favouritesScalarFieldEnum = {
   created_at: 'created_at'
 };
 
+exports.Prisma.Customer_addressesScalarFieldEnum = {
+  id: 'id',
+  customer_id: 'customer_id',
+  label: 'label',
+  full_name: 'full_name',
+  phone: 'phone',
+  street: 'street',
+  city: 'city',
+  postal_code: 'postal_code',
+  is_default: 'is_default'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.categoriesOrderByRelevanceFieldEnum = {
@@ -291,9 +304,15 @@ exports.Prisma.procurementsOrderByRelevanceFieldEnum = {
   status: 'status'
 };
 
-exports.Prisma.product_imagesOrderByRelevanceFieldEnum = {
-  product_id: 'product_id',
-  image_url: 'image_url'
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
+};
+
+exports.Prisma.QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
 };
 
 exports.Prisma.productsOrderByRelevanceFieldEnum = {
@@ -327,16 +346,27 @@ exports.Prisma.customersOrderByRelevanceFieldEnum = {
   id: 'id',
   name: 'name',
   email: 'email',
-  phone: 'phone',
   password: 'password',
-  status: 'status',
-  profile_image: 'profile_image'
+  phone: 'phone',
+  profile_image: 'profile_image',
+  status: 'status'
 };
 
 exports.Prisma.customer_favouritesOrderByRelevanceFieldEnum = {
   id: 'id',
   customer_id: 'customer_id',
   product_id: 'product_id'
+};
+
+exports.Prisma.customer_addressesOrderByRelevanceFieldEnum = {
+  id: 'id',
+  customer_id: 'customer_id',
+  label: 'label',
+  full_name: 'full_name',
+  phone: 'phone',
+  street: 'street',
+  city: 'city',
+  postal_code: 'postal_code'
 };
 exports.orders_status = exports.$Enums.orders_status = {
   PENDING_PROCESSING: 'PENDING_PROCESSING',
@@ -372,12 +402,12 @@ exports.Prisma.ModelName = {
   orders: 'orders',
   finance_transactions: 'finance_transactions',
   procurements: 'procurements',
-  product_images: 'product_images',
   products: 'products',
   transactions: 'transactions',
   users: 'users',
   customers: 'customers',
-  customer_favourites: 'customer_favourites'
+  customer_favourites: 'customer_favourites',
+  customer_addresses: 'customer_addresses'
 };
 
 /**

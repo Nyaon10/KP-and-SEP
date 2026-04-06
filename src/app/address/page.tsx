@@ -18,42 +18,75 @@ export default function AddressBookPage() {
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
-    label: '',
-    fullName: '',
-    phone: '',
-    street: '',
-    city: '',
-    postalCode: ''
+    label: '', fullName: '', phone: '', street: '', city: '', postalCode: ''
   });
 
+  // 1. Fetch user ID from session and load DB addresses on mount
   useEffect(() => {
-    const saved = localStorage.getItem('wanst_addresses');
-    if (saved) setAddresses(JSON.parse(saved));
+    const userStr = localStorage.getItem('wanst_mock_user');
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      setUserId(user.id);
+      fetchAddresses(user.id);
+    }
   }, []);
 
-  const saveToLocal = (updated: Address[]) => {
-    setAddresses(updated);
-    localStorage.setItem('wanst_addresses', JSON.stringify(updated));
+  const fetchAddresses = async (customerId: string) => {
+    try {
+      const res = await fetch(`/api/storefront/addresses?customer_id=${customerId}`);
+      if (res.ok) {
+        const dbAddresses = await res.json();
+        // Map DB snake_case back to frontend camelCase
+        const formatted = dbAddresses.map((db: any) => ({
+          id: db.id,
+          label: db.label,
+          fullName: db.full_name,
+          phone: db.phone,
+          street: db.street,
+          city: db.city,
+          postalCode: db.postal_code,
+          isDefault: db.is_default
+        }));
+        setAddresses(formatted);
+      }
+    } catch (error) {
+      console.error("Failed to load addresses");
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (editingId) {
-      const updated = addresses.map(addr => 
-        addr.id === editingId ? { ...formData, id: addr.id, isDefault: addr.isDefault } : addr
-      );
-      saveToLocal(updated);
-    } else {
-      const newAddress: Address = {
-        ...formData,
-        id: Date.now().toString(),
-        isDefault: addresses.length === 0 
-      };
-      saveToLocal([...addresses, newAddress]);
+    if (!userId) return;
+
+    const payload = {
+      ...formData,
+      customer_id: userId,
+      is_default: addresses.length === 0 // First address is always default
+    };
+
+    try {
+      if (editingId) {
+        await fetch('/api/storefront/addresses', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...payload, id: editingId })
+        });
+      } else {
+        await fetch('/api/storefront/addresses', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      }
+      // Refresh the list from the database
+      fetchAddresses(userId);
+      resetForm();
+    } catch (error) {
+      console.error("Failed to save address");
     }
-    resetForm();
   };
 
   const resetForm = () => {
@@ -68,15 +101,38 @@ export default function AddressBookPage() {
     setIsFormOpen(true);
   };
 
-  const handleDelete = (id: string) => {
-    const updated = addresses.filter(a => a.id !== id);
-    saveToLocal(updated);
+  const handleDelete = async (id: string) => {
+    if (!userId) return;
+    try {
+      await fetch(`/api/storefront/addresses?id=${id}`, { method: 'DELETE' });
+      fetchAddresses(userId);
+    } catch (error) {
+      console.error("Failed to delete");
+    }
   };
 
-  const setAsDefault = (id: string) => {
-    const updated = addresses.map(a => ({ ...a, isDefault: a.id === id }));
-    saveToLocal(updated);
+  const setAsDefault = async (id: string) => {
+    if (!userId) return;
+    const targetAddr = addresses.find(a => a.id === id);
+    if (!targetAddr) return;
+
+    try {
+      await fetch('/api/storefront/addresses', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...targetAddr,
+          customer_id: userId,
+          is_default: true
+        })
+      });
+      fetchAddresses(userId);
+    } catch (error) {
+      console.error("Failed to set default");
+    }
   };
+
+// ... keep your EXACT return ( HTML/JSX ) from your previous code here!
 
   return (
     <main className="min-h-screen bg-stone-50 py-12 px-8">

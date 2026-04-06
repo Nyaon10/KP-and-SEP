@@ -8,7 +8,7 @@ export async function GET() {
       orderBy: { created_at: 'desc' },
       include: {
         categories: true,
-        product_images: true 
+        // ❌ REMOVED: product_images: true (since it doesn't exist anymore!)
       }
     });
 
@@ -29,38 +29,24 @@ export async function POST(request: Request) {
     // Generate a unique ID
     const productId = `BEAN-${Date.now().toString().slice(-6)}`;
 
-    // Use a transaction so we don't get "half-saved" data if one part fails
-    const newProduct = await prisma.$transaction(async (tx) => {
-      // Create the main product
-      const product = await tx.products.create({
-        data: {
-          id: productId,
-          name: body.name,
-          category_slug: body.categorySlug,
-          origin: body.origin,
-          description: body.description,
-          tasting_notes: body.tastingNotes,
-          roast_profile: body.roast,
-          acidity_level: parseInt(body.acidityLevel),
-          roast_level: parseInt(body.roastLevel),
-          base_price: parseInt(body.price),
-          stock: parseInt(body.stock) || 0,
-          roast_log: body.roastLog,
-          main_image: body.image, 
-        },
-      });
-
-      // Create gallery images if they exist
-      if (body.gallery && body.gallery.length > 0) {
-        await tx.product_images.createMany({
-          data: body.gallery.map((url: string) => ({
-            product_id: productId,
-            image_url: url,
-          })),
-        });
-      }
-
-      return product;
+    // MASSIVELY SIMPLIFIED: No transaction needed, just one direct create!
+    const newProduct = await prisma.products.create({
+      data: {
+        id: productId,
+        name: body.name,
+        category_slug: body.categorySlug,
+        origin: body.origin,
+        description: body.description,
+        tasting_notes: body.tastingNotes,
+        roast_profile: body.roast,
+        acidity_level: parseInt(body.acidityLevel),
+        roast_level: parseInt(body.roastLevel),
+        base_price: parseInt(body.price),
+        stock: parseInt(body.stock) || 0,
+        roast_log: body.roastLog,
+        main_image: body.image, 
+        gallery: body.gallery || [], // 👈 Just pass the JSON array directly!
+      },
     });
 
     return NextResponse.json(newProduct);

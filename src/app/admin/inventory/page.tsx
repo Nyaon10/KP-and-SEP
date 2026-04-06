@@ -59,8 +59,9 @@ export default function InventoryPage() {
           tastingNotes: p.tasting_notes || '',
           description: p.description || '',
           roastLog: p.roast_log || '',
-          // Map the related product_images table into a simple array of strings for the UI
-          gallery: p.product_images.map((img: any) => img.image_url)
+          
+          // 👇 REPLACE LINES 62 & 63 WITH THIS SINGLE LINE:
+          gallery: p.gallery || [] 
         }));
 
         setProducts(formattedProducts);

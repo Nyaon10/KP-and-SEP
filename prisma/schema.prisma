@@ -67,14 +67,14 @@ model procurements {
   created_at        DateTime  @default(now()) @db.Timestamp(0)
 }
 
-model product_images {
-  id         Int      @id @default(autoincrement())
-  product_id String   @db.VarChar(50)
-  image_url  String   @db.VarChar(500)
-  products   products @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "product_images_ibfk_1")
-
-  @@index([product_id], map: "product_id")
-}
+// We can comment this out or delete it! You don't need a separate table anymore.
+// model product_images {
+//   id         Int      @id @default(autoincrement())
+//   product_id String   @db.VarChar(50)
+//   image_url  String   @db.VarChar(500)
+//   products   products @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "product_images_ibfk_1")
+//   @@index([product_id], map: "product_id")
+// }
 
 model products {
   id                  String                @id @db.VarChar(50)
@@ -89,7 +89,13 @@ model products {
   cogs                Int?                  @default(0)
   base_price          Int?                  @default(0)
   stock               Int?                  @default(0)
-  main_image          String?               @db.VarChar(500)
+  
+  // 👇 UPDATED: Changed to LongText to safely hold massive Base64 image strings
+  main_image          String?               @db.LongText
+  
+  // 👇 NEW: Store the 4 gallery images directly as a simple JSON array!
+  gallery             Json?                 
+  
   roast_log           String?               @db.Text
   created_at          DateTime              @default(now()) @db.Timestamp(0)
   updated_at          DateTime              @default(now()) @db.Timestamp(0)
@@ -97,9 +103,9 @@ model products {
   is_on_sale          Boolean?              @default(false)
   discount_start      String?               @db.VarChar(10)
   discount_end        String?               @db.VarChar(10)
+  
   customer_favourites customer_favourites[]
   order_items         order_items[]
-  product_images      product_images[]
   categories          categories            @relation(fields: [category_slug], references: [slug], map: "products_ibfk_1")
 
   @@index([category_slug], map: "category_slug")
@@ -128,15 +134,21 @@ model users {
 }
 
 model customers {
-  id                  String                @id @default(uuid()) @db.VarChar(50)
-  name                String                @db.VarChar(255)
-  email               String                @unique(map: "email_unique") @db.VarChar(255)
-  phone               String?               @db.VarChar(50)
-  password            String                @db.VarChar(255)
-  status              String                @default("ACTIVE") @db.VarChar(20)
-  created_at          DateTime              @default(now()) @db.Timestamp(0)
-  profile_image       String?               @db.LongText
-  customer_favourites customer_favourites[]
+  id               String   @id @default(uuid())
+  name             String
+  email            String   @unique
+  password         String
+  phone            String?
+  profile_image    String?
+  status           String   @default("ACTIVE")
+  created_at       DateTime @default(now())
+  last_login       DateTime?
+
+  // Add this ONE line right here! 👇
+  addresses        customer_addresses[] 
+  
+  // (You probably also have your favourites relation here too)
+  favourites       customer_favourites[]
 }
 
 model customer_favourites {
@@ -150,6 +162,24 @@ model customer_favourites {
   @@unique([customer_id, product_id], map: "unique_fav")
   @@index([product_id], map: "product_id")
 }
+
+model customer_addresses {
+  id          String   @id @default(uuid())
+  customer_id String
+  label       String
+  full_name   String
+  phone       String
+  street      String
+  city        String
+  postal_code String
+  is_default  Boolean  @default(false)
+
+  // Relation back to the customer
+  customer    customers @relation(fields: [customer_id], references: [id], onDelete: Cascade)
+}
+
+// NOTE: Add this single line inside your existing "model customers" block:
+// addresses customer_addresses[]
 
 enum transactions_type {
   CREDIT
