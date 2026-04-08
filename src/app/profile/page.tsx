@@ -45,29 +45,62 @@ export default function ProfilePage() {
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      
-      const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
-      if (!validTypes.includes(file.type)) {
-        alert("Invalid file format. Please upload a JPG, PNG, or WebP image.");
-        e.target.value = ''; 
-        return;
-      }
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-      const maxSizeInBytes = 2 * 1024 * 1024; // 2MB
-      if (file.size > maxSizeInBytes) {
-        alert("File is too large. Please upload an image smaller than 2MB.");
-        e.target.value = ''; 
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setEditFormData({ ...editFormData, profileImage: reader.result as string });
-      };
-      reader.readAsDataURL(file);
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      alert("Invalid file format. Please upload a JPG, PNG, or WebP image.");
+      e.target.value = ''; 
+      return;
     }
+
+    // We no longer need the strict 2MB block because we are going to compress it!
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      // 1. Create a temporary image object in the browser
+      const img = new window.Image();
+      img.src = event.target?.result as string;
+
+      img.onload = () => {
+        // 2. Create an invisible Canvas
+        const canvas = document.createElement('canvas');
+        
+        // 3. Set max dimensions (300x300 is perfect for profile pictures)
+        const MAX_WIDTH = 300;
+        const MAX_HEIGHT = 300;
+        let width = img.width;
+        let height = img.height;
+
+        // Calculate the new dimensions while keeping the aspect ratio perfectly square
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        // 4. Draw the image onto the canvas at the new tiny size
+        const ctx = canvas.getContext('2d');
+        ctx?.drawImage(img, 0, 0, width, height);
+
+        // 5. Convert the canvas back into a highly compressed WebP text string (0.7 quality)
+        const compressedBase64 = canvas.toDataURL('image/webp', 0.7);
+
+        // 6. Save this lightweight string to your state!
+        setEditFormData({ ...editFormData, profileImage: compressedBase64 });
+      };
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSaveChanges = async (e: React.FormEvent) => {
