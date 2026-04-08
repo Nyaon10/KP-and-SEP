@@ -1,19 +1,26 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export default function middleware(request: NextRequest) {
+export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
-  // We need to check for the session (ideally via cookies for middleware)
-  // But for now, let's fix the redirect target:
   const isInternalPath = pathname.startsWith('/admin') || pathname.startsWith('/manager');
   const isLoginPage = pathname === '/admin/login';
 
-  // If you want to add a basic check here:
-  // if (isInternalPath && !isLoginPage && !request.cookies.has('wanst_session')) {
-  //   return NextResponse.redirect(new URL('/admin/login', request.url));
-  // }
+  // 1. Check if the browser sent the auth cookie
+  const sessionCookie = request.cookies.get('wanst_admin_session');
 
+  // 2. If they are trying to access a protected page WITHOUT a cookie, kick them to login
+  if (isInternalPath && !isLoginPage && !sessionCookie) {
+    return NextResponse.redirect(new URL('/admin/login', request.url));
+  }
+
+  // 3. If they HAVE a cookie and try to visit the login page, send them to the dashboard
+  if (isLoginPage && sessionCookie) {
+    return NextResponse.redirect(new URL('/admin/dashboard', request.url));
+  }
+
+  // Let them pass
   return NextResponse.next();
 }
 
