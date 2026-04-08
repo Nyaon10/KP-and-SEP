@@ -250,6 +250,15 @@ exports.Prisma.Customer_addressesScalarFieldEnum = {
   is_default: 'is_default'
 };
 
+exports.Prisma.Product_reviewsScalarFieldEnum = {
+  id: 'id',
+  product_id: 'product_id',
+  user_name: 'user_name',
+  rating: 'rating',
+  comment: 'comment',
+  created_at: 'created_at'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -368,6 +377,13 @@ exports.Prisma.customer_addressesOrderByRelevanceFieldEnum = {
   city: 'city',
   postal_code: 'postal_code'
 };
+
+exports.Prisma.product_reviewsOrderByRelevanceFieldEnum = {
+  id: 'id',
+  product_id: 'product_id',
+  user_name: 'user_name',
+  comment: 'comment'
+};
 exports.orders_status = exports.$Enums.orders_status = {
   PENDING_PROCESSING: 'PENDING_PROCESSING',
   SHIPPED: 'SHIPPED',
@@ -407,7 +423,8 @@ exports.Prisma.ModelName = {
   users: 'users',
   customers: 'customers',
   customer_favourites: 'customer_favourites',
-  customer_addresses: 'customer_addresses'
+  customer_addresses: 'customer_addresses',
+  product_reviews: 'product_reviews'
 };
 
 /**

@@ -70,6 +70,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <Link href="/admin/customers" className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-xs font-bold uppercase tracking-widest transition-all ${pathname.includes('/customers') ? 'bg-amber-700/20 text-amber-500 border border-amber-900/50' : 'text-stone-400 hover:bg-stone-800 hover:text-stone-200 border border-transparent'}`}>
                 Customer Accounts
               </Link>
+              <Link href="/admin/comments" className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-xs font-bold uppercase tracking-widest transition-all ${pathname.includes('/comments') ? 'bg-amber-700/20 text-amber-500 border border-amber-900/50' : 'text-stone-400 hover:bg-stone-800 hover:text-stone-200 border border-transparent'}`}>
+                Community Feedback
+              </Link>
             </>
           )}
 
@@ -87,6 +90,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <Link href="/admin/users" className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-xs font-bold uppercase tracking-widest transition-all ${pathname.includes('/users') ? 'bg-amber-700/20 text-amber-500 border border-amber-900/50' : 'text-stone-400 hover:bg-stone-800 hover:text-stone-200 border border-transparent'}`}>
                 User Management
               </Link>
+              
             </>
           )}
         </nav>

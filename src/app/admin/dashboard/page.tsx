@@ -117,6 +117,12 @@ export default function DashboardOverviewPage() {
               <h4 className="font-bold text-stone-200 group-hover:text-amber-500 mb-2 transition-colors">🤝 Customer Accounts</h4>
               <p className="text-xs text-stone-500 leading-relaxed">Manage registered customers, suspend access, or remove accounts.</p>
             </Link>
+
+            {/* NEW: Community Feedback Card */}
+            <Link href="/admin/comments" className="group bg-stone-900 hover:bg-stone-800 border border-stone-800 hover:border-amber-900/50 p-6 rounded-xl transition-all">
+              <h4 className="font-bold text-stone-200 group-hover:text-amber-500 mb-2 transition-colors">💬 Community Feedback</h4>
+              <p className="text-xs text-stone-500 leading-relaxed">Monitor customer reviews, moderate comments, and remove inappropriate content.</p>
+            </Link>
           </>
         )}
 
@@ -137,6 +143,7 @@ export default function DashboardOverviewPage() {
               <h4 className="font-bold text-stone-200 group-hover:text-amber-500 mb-2 transition-colors">👥 User Management</h4>
               <p className="text-xs text-stone-500 leading-relaxed">Control admin access, create accounts, and manage permissions.</p>
             </Link>
+            
           </>
         )}
       </div>

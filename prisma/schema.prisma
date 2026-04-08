@@ -108,6 +108,9 @@ model products {
   order_items         order_items[]
   categories          categories            @relation(fields: [category_slug], references: [slug], map: "products_ibfk_1")
 
+  // 👇 ADD THIS LINE:
+  product_reviews     product_reviews[]
+
   @@index([category_slug], map: "category_slug")
 }
 
@@ -175,6 +178,19 @@ model customer_addresses {
 
   // Relation back to the customer
   customer    customers @relation(fields: [customer_id], references: [id], onDelete: Cascade)
+}
+
+model product_reviews {
+  id         String   @id @default(uuid()) @db.VarChar(50)
+  product_id String   @db.VarChar(50)
+  user_name  String   @db.VarChar(255)
+  rating     Int
+  comment    String   @db.Text
+  created_at DateTime @default(now()) @db.Timestamp(0)
+
+  products   products @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@index([product_id])
 }
 
 // NOTE: Add this single line inside your existing "model customers" block:

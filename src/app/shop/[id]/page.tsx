@@ -59,6 +59,7 @@ export default function ProductDetailPage() {
 
   const selectedWeight = '200g';
 
+  // 👇 ADD THIS ENTIRE BLOCK BACK IN!
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -71,18 +72,15 @@ export default function ProductDetailPage() {
 
           if (dbData.is_on_sale && dbData.discount_price) {
             let isDiscountActive = true;
-
             if (dbData.discount_start) {
               const startDate = new Date(dbData.discount_start);
               if (now < startDate) isDiscountActive = false;
             }
-
             if (dbData.discount_end) {
               const endDate = new Date(dbData.discount_end);
               endDate.setHours(23, 59, 59, 999);
               if (now > endDate) isDiscountActive = false;
             }
-
             if (isDiscountActive) {
               activeDiscount = Number(dbData.discount_price);
             }
@@ -98,7 +96,7 @@ export default function ProductDetailPage() {
             discountPrice: activeDiscount,
             categorySlug: dbData.category_slug || "uncategorized",
             image: dbData.main_image || "/images/CB01-1.jpeg",
-            gallery: dbData.gallery || [], // <--- The JSON Fix
+            gallery: dbData.gallery || [], 
             origin: dbData.origin || "Signature Blend",
             tastingNotes: dbData.tasting_notes 
               ? dbData.tasting_notes.split(',').map((n: string) => n.trim()) 
@@ -112,17 +110,39 @@ export default function ProductDetailPage() {
       } catch (err) {
         console.error("Error fetching product:", err);
       } finally {
-        setIsLoading(false);
+        setIsLoading(false); // <--- This is what turns off the loading screen!
       }
     };
 
     fetchProduct();
   }, [productId]);
+  // 👆 END OF RESTORED BLOCK
 
+  // Fetch real reviews from the database
   useEffect(() => {
-    const savedReviews = localStorage.getItem(`wanst-reviews-${productId}`);
-    if (savedReviews) setReviews(JSON.parse(savedReviews));
+    const fetchReviews = async () => {
+      try {
+        const res = await fetch(`/api/storefront/products/${productId}/reviews`);
+        if (res.ok) {
+          const dbReviews = await res.json();
+          // Map database structure to your UI state structure
+          const formattedReviews = dbReviews.map((r: any) => ({
+            id: r.id,
+            user: r.user_name,
+            rating: r.rating,
+            comment: r.comment,
+            date: new Date(r.created_at).toLocaleDateString('en-CA')
+          }));
+          setReviews(formattedReviews);
+        }
+      } catch (err) {
+        console.error("Failed to load reviews:", err);
+      }
+    };
 
+    fetchReviews();
+
+    // Still grab the current user's name for posting
     const storedUserStr = localStorage.getItem('wanst_mock_user');
     if (storedUserStr) {
       const parsedUser = JSON.parse(storedUserStr);
@@ -130,9 +150,7 @@ export default function ProductDetailPage() {
     }
   }, [productId]);
 
-  useEffect(() => {
-    if (reviews.length > 0) localStorage.setItem(`wanst-reviews-${productId}`, JSON.stringify(reviews));
-  }, [reviews, productId]);
+  // (Delete the other useEffect that saves reviews to localStorage!)
 
   if (isLoading) {
     return <div className="min-h-screen flex items-center justify-center bg-stone-50 animate-pulse text-stone-400 uppercase tracking-widest font-bold text-sm">Loading Roast Details...</div>;
@@ -146,15 +164,42 @@ export default function ProductDetailPage() {
   const totalPrice = activePrice * quantity;
   const averageRating = reviews.length > 0 ? Math.round(reviews.reduce((acc, rev) => acc + rev.rating, 0) / reviews.length) : 0;
 
-  const handleSubmitReview = (e: React.FormEvent) => {
+  const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newReviewComment.trim()) return;
-    const today = new Date().toLocaleDateString('en-CA');
-    const newReviewObj = { id: Date.now(), user: currentUserName, rating: newReviewRating, comment: newReviewComment, date: today };
-    setReviews([newReviewObj, ...reviews]);
-    setIsReviewFormOpen(false);
-    setNewReviewComment("");
-    setNewReviewRating(5);
+    
+    try {
+      const res = await fetch(`/api/storefront/products/${productId}/reviews`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user: currentUserName,
+          rating: newReviewRating,
+          comment: newReviewComment
+        })
+      });
+
+      if (!res.ok) throw new Error("Failed to save review");
+
+      const savedReview = await res.json();
+      
+      // Add the real database review instantly to the UI
+      const newReviewObj = { 
+        id: savedReview.id, 
+        user: savedReview.user_name, 
+        rating: savedReview.rating, 
+        comment: savedReview.comment, 
+        date: new Date(savedReview.created_at).toLocaleDateString('en-CA') 
+      };
+
+      setReviews([newReviewObj, ...reviews]);
+      setIsReviewFormOpen(false);
+      setNewReviewComment("");
+      setNewReviewRating(5);
+      
+    } catch (err) {
+      alert("System connection error. Could not post review.");
+    }
   };
 
   return (
