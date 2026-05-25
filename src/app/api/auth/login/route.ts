@@ -38,8 +38,6 @@ export async function POST(request: Request) {
     });
 
     // 6. 🔥 THE MAGIC COOKIE 🔥
-    // Attach the role cookie so the Middleware can see it!
-    // 6. 🔥 THE MAGIC COOKIE 🔥
     response.cookies.set({
       name: 'wanst_user_role',
       value: user.role || 'GUEST', // <-- THE FIX: Fallback to 'GUEST' if null
