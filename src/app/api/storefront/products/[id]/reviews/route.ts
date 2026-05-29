@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import prisma from '../../../../../../lib/prisma'; // Adjust dots if necessary based on your structure
+import {prisma} from '../../../../../../lib/prisma'; // Adjust dots if necessary based on your structure
 
 // GET: Fetch all reviews for a specific product
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {

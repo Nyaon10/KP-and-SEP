@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "./generated/client"
 }
 
 datasource db {
@@ -29,6 +28,11 @@ model order_items {
 
 model orders {
   id               String         @id @db.VarChar(50)
+  
+  // 👇 ADD THESE TWO LINES 👇
+  customer_id      String?        @db.VarChar(255) 
+  customers        customers?     @relation(fields: [customer_id], references: [id], onDelete: SetNull)
+
   customer_name    String         @db.VarChar(255)
   customer_email   String         @db.VarChar(255)
   customer_phone   String         @db.VarChar(50)
@@ -41,6 +45,8 @@ model orders {
   cancel_reason    String?        @db.Text
   created_at       DateTime       @default(now()) @db.Timestamp(0)
   order_items      order_items[]
+
+  @@index([customer_id]) // Good practice for foreign keys
 }
 
 model finance_transactions {
@@ -151,6 +157,8 @@ model customers {
   last_login       DateTime?
   addresses        customer_addresses[] 
   favourites       customer_favourites[]
+
+  orders           orders[]
 }
 
 model customer_favourites {

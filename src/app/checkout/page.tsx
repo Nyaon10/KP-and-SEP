@@ -13,6 +13,7 @@ interface Address {
   street: string;
   city: string;
   postalCode: string;
+  isDefault?: boolean;
 }
 
 export default function CheckoutPage() {
@@ -20,9 +21,11 @@ export default function CheckoutPage() {
   const { cart, totalPrice, totalItems, clearCart } = useCart();
   
   const [savedAddresses, setSavedAddresses] = useState<Address[]>([]);
-  const [selectedAddressId, setSelectedAddressId] = useState<string>('new');
+  const [selectedAddressId, setSelectedAddressId] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isLoadingAddresses, setIsLoadingAddresses] = useState(true);
 
+  // 👇 Removed paymentMethod from state
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -30,21 +33,70 @@ export default function CheckoutPage() {
     city: '',
     postalCode: '',
     phone: '',
-    paymentMethod: 'bank_transfer' // Default selection
   });
 
+  const [shippingFee, setShippingFee] = useState(0);
+
   useEffect(() => {
-    const saved = localStorage.getItem('wanst_addresses');
-    if (saved) {
-      const parsedAddresses = JSON.parse(saved);
-      setSavedAddresses(parsedAddresses);
-      const defaultAddr = parsedAddresses.find((a: any) => a.isDefault);
-      if (defaultAddr) {
-        fillForm(defaultAddr);
-        setSelectedAddressId(defaultAddr.id);
+    const fetchAddresses = async () => {
+      const userStr = localStorage.getItem('wanst_mock_user');
+      
+      if (!userStr) {
+        setIsLoadingAddresses(false);
+        return;
       }
-    }
+
+      try {
+        const user = JSON.parse(userStr);
+        setFormData(prev => ({ ...prev, email: user.email || '' }));
+
+        const res = await fetch(`/api/storefront/addresses?customer_id=${user.id}`);
+        
+        if (res.ok) {
+          const dbAddresses = await res.json();
+          
+          const formatted = dbAddresses.map((db: any) => ({
+            id: db.id,
+            label: db.label,
+            fullName: db.full_name,
+            phone: db.phone,
+            street: db.street,
+            city: db.city,
+            postalCode: db.postal_code,
+            isDefault: db.is_default
+          }));
+
+          setSavedAddresses(formatted);
+
+          if (formatted.length > 0) {
+            const defaultAddr = formatted.find((a: any) => a.isDefault) || formatted[0];
+            setSelectedAddressId(defaultAddr.id);
+            fillForm(defaultAddr);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch addresses:", error);
+      } finally {
+        setIsLoadingAddresses(false);
+      }
+    };
+
+    fetchAddresses();
   }, []);
+
+  useEffect(() => {
+    const destinationCity = formData.city.toLowerCase();
+    
+    if (!destinationCity) {
+      setShippingFee(0);
+    } else if (destinationCity.includes('surabaya')) {
+      setShippingFee(10000);
+    } else if (destinationCity.includes('sidoarjo')) {
+      setShippingFee(15000);
+    } else {
+      setShippingFee(25000); 
+    }
+  }, [formData.city]);
 
   const fillForm = (addr: Address) => {
     setFormData(prev => ({
@@ -59,12 +111,8 @@ export default function CheckoutPage() {
 
   const handleAddressChange = (id: string) => {
     setSelectedAddressId(id);
-    if (id === 'new') {
-      setFormData(prev => ({ ...prev, fullName: '', phone: '', address: '', city: '', postalCode: '' }));
-    } else {
-      const addr = savedAddresses.find(a => a.id === id);
-      if (addr) fillForm(addr);
-    }
+    const addr = savedAddresses.find(a => a.id === id);
+    if (addr) fillForm(addr);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,40 +120,50 @@ export default function CheckoutPage() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // Function to handle payment method selection
-  const handlePaymentChange = (method: string) => {
-    setFormData(prev => ({ ...prev, paymentMethod: method }));
-  };
-
   const handleSubmitOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsProcessing(true);
 
-    // MOCK MIDTRANS FLOW:
-    // In production, the paymentMethod chosen here can be passed to the backend
-    // to pre-select the screen in the Midtrans Snap popup.
-    
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    try {
+      const finalTotalAmount = totalPrice + shippingFee;
+      const fullShippingAddress = `${formData.address}, ${formData.city}, ${formData.postalCode}`;
 
-    const orderId = `WNST-${Math.floor(100000 + Math.random() * 900000)}`;
-    const newOrder = {
-      id: orderId,
-      date: new Date().toLocaleDateString('en-CA'),
-      items: cart,
-      total: totalPrice,
-      status: 'Pending Payment',
-      shippingDetails: formData
-    };
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: cart,
+          totalAmount: finalTotalAmount, 
+          shippingAddress: fullShippingAddress,
+          shippingFee: shippingFee
+        }),
+      });
 
-    const existingOrders = JSON.parse(localStorage.getItem('wanst_orders') || '[]');
-    localStorage.setItem('wanst_orders', JSON.stringify([newOrder, ...existingOrders]));
+      const data = await response.json();
 
-    clearCart();
-    
-    alert(`Redirecting to Midtrans Secure Payment for ${formData.paymentMethod.replace('_', ' ')}...`);
-    router.push(`/checkout/success?id=${orderId}`);
+      if (response.status === 401) {
+        alert('Your session expired. Please log in to complete your purchase!');
+        router.push('/login');
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Something went wrong during checkout.');
+      }
+
+      if (data.paymentUrl) {
+        clearCart(); 
+        window.location.href = data.paymentUrl; 
+      }
+
+    } catch (error) {
+      console.error('Checkout error:', error);
+      alert('Failed to initiate checkout. Please check your connection and try again.');
+    } finally {
+      setIsProcessing(false);
+    }
   };
-
+  
   if (cart.length === 0 && !isProcessing) return null;
 
   return (
@@ -122,105 +180,73 @@ export default function CheckoutPage() {
                 Shipping Information
               </h2>
 
-              {savedAddresses.length > 0 && (
-                <div className="mb-8 p-6 bg-amber-50 rounded-2xl border-2 border-amber-200">
-                  <label className="block text-[10px] font-bold text-amber-900 uppercase tracking-widest mb-3">Saved Addresses</label>
-                  <select 
-                    value={selectedAddressId}
-                    onChange={(e) => handleAddressChange(e.target.value)}
-                    className="w-full p-4 bg-white border border-amber-300 rounded-xl text-stone-900 font-bold focus:outline-none"
+              {isLoadingAddresses ? (
+                <div className="p-8 text-center bg-stone-100 rounded-2xl border-2 border-stone-200">
+                  <p className="text-stone-500 font-bold uppercase tracking-widest text-xs animate-pulse">Loading your addresses...</p>
+                </div>
+              ) : savedAddresses.length === 0 ? (
+                <div className="bg-rose-50 border-2 border-rose-200 rounded-2xl p-8 text-center shadow-sm">
+                  <div className="w-16 h-16 bg-rose-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-rose-600">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                    </svg>
+                  </div>
+                  <h3 className="font-oswald text-2xl font-bold text-rose-900 uppercase mb-2">No Address Found</h3>
+                  <p className="text-stone-600 mb-6 font-medium">You need to set up a delivery destination before checking out.</p>
+                  <button
+                    type="button"
+                    onClick={() => router.push('/address')}
+                    className="bg-stone-900 text-white px-8 py-4 rounded-xl font-bold uppercase text-xs tracking-widest hover:bg-amber-800 transition-all shadow-xl active:scale-95"
                   >
-                    <option value="new">Add New Address / Manual Entry</option>
-                    {savedAddresses.map(addr => (
-                      <option key={addr.id} value={addr.id}>{addr.label} — {addr.fullName}</option>
-                    ))}
-                  </select>
+                    Go to Address Book
+                  </button>
                 </div>
+              ) : (
+                <>
+                  <div className="mb-8 p-6 bg-amber-50 rounded-2xl border-2 border-amber-200">
+                    <label className="block text-[10px] font-bold text-amber-900 uppercase tracking-widest mb-3">Select Delivery Address</label>
+                    <select 
+                      value={selectedAddressId}
+                      onChange={(e) => handleAddressChange(e.target.value)}
+                      className="w-full p-4 bg-white border border-amber-300 rounded-xl text-stone-900 font-bold focus:outline-none"
+                    >
+                      {savedAddresses.map(addr => (
+                        <option key={addr.id} value={addr.id}>{addr.label} — {addr.fullName} ({addr.city})</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="md:col-span-2">
+                      <label className="block text-[10px] font-bold text-stone-500 uppercase tracking-widest mb-2">Email for Receipt</label>
+                      <input required name="email" value={formData.email} onChange={handleInputChange} type="email" className="w-full p-4 bg-white border border-stone-200 rounded-xl focus:border-amber-700 outline-none text-stone-900 font-medium" placeholder="your@email.com" />
+                    </div>
+                    
+                    <div className="md:col-span-2">
+                      <label className="block text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-2">Full Name</label>
+                      <input readOnly value={formData.fullName} className="w-full p-4 bg-stone-100 border border-stone-200 rounded-xl text-stone-500 font-medium cursor-not-allowed" />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="block text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-2">Phone</label>
+                      <input readOnly value={formData.phone} className="w-full p-4 bg-stone-100 border border-stone-200 rounded-xl text-stone-500 font-medium cursor-not-allowed" />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="block text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-2">Address</label>
+                      <input readOnly value={formData.address} className="w-full p-4 bg-stone-100 border border-stone-200 rounded-xl text-stone-500 font-medium cursor-not-allowed" />
+                    </div>
+                    <input readOnly value={formData.city} className="w-full p-4 bg-stone-100 border border-stone-200 rounded-xl text-stone-500 font-medium cursor-not-allowed" />
+                    <input readOnly value={formData.postalCode} className="w-full p-4 bg-stone-100 border border-stone-200 rounded-xl text-stone-500 font-medium cursor-not-allowed" />
+                  </div>
+                </>
               )}
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="md:col-span-2">
-                  <label className="block text-[10px] font-bold text-stone-500 uppercase tracking-widest mb-2">Full Name</label>
-                  <input required name="fullName" value={formData.fullName} onChange={handleInputChange} className="w-full p-4 bg-white border border-stone-200 rounded-xl focus:border-amber-700 outline-none text-stone-900 font-medium" />
-                </div>
-                <div className="md:col-span-2">
-                  <label className="block text-[10px] font-bold text-stone-500 uppercase tracking-widest mb-2">Email</label>
-                  <input required name="email" value={formData.email} onChange={handleInputChange} type="email" className="w-full p-4 bg-white border border-stone-200 rounded-xl focus:border-amber-700 outline-none text-stone-900 font-medium" />
-                </div>
-                <div className="md:col-span-2">
-                  <label className="block text-[10px] font-bold text-stone-500 uppercase tracking-widest mb-2">Phone</label>
-                  <input required name="phone" value={formData.phone} onChange={handleInputChange} className="w-full p-4 bg-white border border-stone-200 rounded-xl focus:border-amber-700 outline-none text-stone-900 font-medium" />
-                </div>
-                <div className="md:col-span-2">
-                  <label className="block text-[10px] font-bold text-stone-500 uppercase tracking-widest mb-2">Address</label>
-                  <input required name="address" value={formData.address} onChange={handleInputChange} className="w-full p-4 bg-white border border-stone-200 rounded-xl focus:border-amber-700 outline-none text-stone-900 font-medium" />
-                </div>
-                <input required name="city" value={formData.city} onChange={handleInputChange} placeholder="City" className="w-full p-4 bg-white border border-stone-200 rounded-xl focus:border-amber-700 outline-none text-stone-900 font-medium" />
-                <input required name="postalCode" value={formData.postalCode} onChange={handleInputChange} placeholder="Postal Code" className="w-full p-4 bg-white border border-stone-200 rounded-xl focus:border-amber-700 outline-none text-stone-900 font-medium" />
-              </div>
-            </section>
-
-            {/* --- SECTION 2: PAYMENT (MIDTRANS OPTIONS) --- */}
-            <section>
-              <h2 className="text-xl font-bold text-stone-900 uppercase tracking-wide mb-6 flex items-center gap-3">
-                <span className="w-8 h-8 rounded-full bg-stone-900 text-white flex items-center justify-center text-sm">2</span>
-                Payment Method
-              </h2>
-              
-              <div className="space-y-4">
-                {/* Bank Transfer Option */}
-                <div 
-                  onClick={() => handlePaymentChange('bank_transfer')}
-                  className={`p-5 rounded-2xl border-2 cursor-pointer transition-all flex items-center justify-between ${formData.paymentMethod === 'bank_transfer' ? 'border-amber-800 bg-amber-50' : 'border-stone-200 bg-white hover:border-stone-300'}`}
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-stone-100 rounded-lg flex items-center justify-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-stone-600">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <p className="font-bold text-stone-900 uppercase text-xs tracking-wider">Bank Transfer</p>
-                      <p className="text-[10px] text-stone-500 font-medium uppercase tracking-widest">BCA, Mandiri, BNI, BRI</p>
-                    </div>
-                  </div>
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${formData.paymentMethod === 'bank_transfer' ? 'border-amber-800' : 'border-stone-300'}`}>
-                    {formData.paymentMethod === 'bank_transfer' && <div className="w-2.5 h-2.5 bg-amber-800 rounded-full"></div>}
-                  </div>
-                </div>
-
-                {/* QRIS / E-Wallet Option */}
-                <div 
-                  onClick={() => handlePaymentChange('qris')}
-                  className={`p-5 rounded-2xl border-2 cursor-pointer transition-all flex items-center justify-between ${formData.paymentMethod === 'qris' ? 'border-amber-800 bg-amber-50' : 'border-stone-200 bg-white hover:border-stone-300'}`}
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-stone-100 rounded-lg flex items-center justify-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-stone-600">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5ZM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0 1 13.5 9.375v-4.5ZM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 0 1-1.125-1.125v-4.5ZM13.5 15.625a1.125 1.125 0 0 1 1.125-1.125H15m1.5 0h1.5m.75 0a1.125 1.125 0 0 1 1.125 1.125v1.5a1.125 1.125 0 0 1-1.125 1.125M13.5 15.625V15m0 0v1.5m0 0h1.5m-1.5 0a1.125 1.125 0 0 0 1.125 1.125H15m1.5 0h1.5m.75 0v-1.5m0 1.5a1.125 1.125 0 0 0 1.125-1.125M18.75 15h.75m0 1.5v.75m0-6V8.25m0 0V7.5m0 0.75h.75m-3.75 0h.008v.008H15V8.25Zm3.75 0h.008v.008H18.75V8.25Zm-3.75 3.75h.008v.008H15V12Zm3.75 0h.008v.008H18.75V12Z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <p className="font-bold text-stone-900 uppercase text-xs tracking-wider">E-Wallet / QRIS</p>
-                      <p className="text-[10px] text-stone-500 font-medium uppercase tracking-widest">GoPay, ShopeePay, Dana, LinkAja</p>
-                    </div>
-                  </div>
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${formData.paymentMethod === 'qris' ? 'border-amber-800' : 'border-stone-300'}`}>
-                    {formData.paymentMethod === 'qris' && <div className="w-2.5 h-2.5 bg-amber-800 rounded-full"></div>}
-                  </div>
-                </div>
-
-                <p className="text-[10px] text-stone-400 font-bold uppercase tracking-widest text-center mt-2">
-                  Payments secured by Midtrans Snap
-                </p>
-              </div>
             </section>
           </div>
 
           <div className="lg:pl-12">
             <div className="bg-white rounded-3xl border-2 border-stone-900 p-8 shadow-xl sticky top-32">
               <h2 className="font-oswald text-2xl font-bold text-stone-900 uppercase mb-8">Review Order</h2>
-              {/* ... (Keep your cart mapping code here) ... */}
+              
               <div className="max-h-[300px] overflow-y-auto mb-8 space-y-4 pr-2">
                 {cart.map((item) => (
                   <div key={item.id} className="flex gap-4 items-center">
@@ -236,21 +262,44 @@ export default function CheckoutPage() {
                 ))}
               </div>
 
-              <div className="border-t border-stone-200 pt-6 mb-8 flex justify-between items-end">
+              <div className="border-t border-stone-200 pt-6 space-y-3">
+                <div className="flex justify-between items-center text-stone-600">
+                  <span className="font-bold text-sm uppercase">Subtotal</span>
+                  <span className="font-mono font-bold">Rp {totalPrice.toLocaleString('id-ID')}</span>
+                </div>
+                
+                <div className="flex justify-between items-center text-stone-600">
+                  <span className="font-bold text-sm uppercase">Shipping</span>
+                  <span className="font-mono font-bold">
+                    {savedAddresses.length === 0 ? '-' : `Rp ${shippingFee.toLocaleString('id-ID')}`}
+                  </span>
+                </div>
+              </div>
+
+              <div className="border-t border-stone-900 mt-4 pt-4 mb-8 flex justify-between items-end">
                 <span className="font-oswald font-bold text-stone-900 uppercase text-xl">Total</span>
                 <div className="flex items-baseline gap-2 text-amber-800">
                   <span className="text-lg font-bold">Rp</span>
-                  <span className="text-3xl font-mono font-bold">{totalPrice.toLocaleString('id-ID')}</span>
+                  <span className="text-3xl font-mono font-bold">
+                    {(totalPrice + shippingFee).toLocaleString('id-ID')}
+                  </span>
                 </div>
               </div>
 
               <button 
                 type="submit"
-                disabled={isProcessing}
-                className="w-full bg-stone-900 text-white py-5 rounded-2xl font-bold uppercase tracking-widest hover:bg-amber-800 transition-all shadow-xl active:scale-[0.98] disabled:opacity-50"
+                disabled={isProcessing || isLoadingAddresses || savedAddresses.length === 0} 
+                className="w-full bg-stone-900 text-white py-5 rounded-2xl font-bold uppercase tracking-widest hover:bg-amber-800 transition-all shadow-xl active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isProcessing ? 'Connecting...' : `Proceed to Payment`}
               </button>
+              
+              <div className="flex items-center justify-center gap-2 mt-4 text-stone-400">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                </svg>
+                <span className="text-[9px] font-bold uppercase tracking-widest">Payments secured by Midtrans</span>
+              </div>
             </div>
           </div>
         </form>

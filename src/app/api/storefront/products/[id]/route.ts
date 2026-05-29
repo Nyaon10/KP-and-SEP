@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import prisma from '../../../../../lib/prisma'; // Should be 6 dots up depending on where your lib folder is!
+import { prisma } from '../../../../../lib/prisma'; // Should be 6 dots up depending on where your lib folder is!
 
 export async function GET(
   request: Request,

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import prisma from '../../../../lib/prisma'; // Adjust dots if needed
+import { prisma } from '../../../../lib/prisma'; // Adjust dots if needed // Adjust dots if needed
 
 // GET: Fetch all addresses for a user
 export async function GET(request: Request) {

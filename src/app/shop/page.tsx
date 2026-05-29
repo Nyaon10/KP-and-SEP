@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import QuickAdd from '../../components/QuickAdd';
-import prisma from '../../lib/prisma'; 
+import {prisma} from '../../lib/prisma'; 
 
 interface Product {
   id: string;

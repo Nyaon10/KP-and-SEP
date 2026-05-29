@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import prisma from '../../../../../lib/prisma'; // 5 sets of dots!
+import { prisma } from '../../../../../lib/prisma'; // 5 sets of dots!
 
 export async function POST(request: Request) {
   try {

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import prisma from '../../../../lib/prisma'; // Ensure this matches your batch route!
+import {prisma} from '../../../../lib/prisma'; // Ensure this matches your batch route!
 
 // TOGGLE A FAVOURITE (Add or Remove)
 export async function POST(request: Request) {

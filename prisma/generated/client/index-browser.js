@@ -136,6 +136,7 @@ exports.Prisma.Order_itemsScalarFieldEnum = {
 
 exports.Prisma.OrdersScalarFieldEnum = {
   id: 'id',
+  customer_id: 'customer_id',
   customer_name: 'customer_name',
   customer_email: 'customer_email',
   customer_phone: 'customer_phone',
@@ -287,6 +288,7 @@ exports.Prisma.NullsOrder = {
 
 exports.Prisma.ordersOrderByRelevanceFieldEnum = {
   id: 'id',
+  customer_id: 'customer_id',
   customer_name: 'customer_name',
   customer_email: 'customer_email',
   customer_phone: 'customer_phone',

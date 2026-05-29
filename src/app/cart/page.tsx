@@ -1,11 +1,21 @@
 "use client";
 
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation'; 
 import { useCart } from '../../context/CartContext'; 
 
 export default function CartPage() {
   const { cart, removeFromCart, updateQuantity, totalPrice, totalItems } = useCart();
+  const [isRouting, setIsRouting] = useState(false);
+  const router = useRouter();
+
+  // 👇 UPDATED: This now simply sends the user to the address/checkout page!
+  const handleCheckout = () => {
+    setIsRouting(true);
+    router.push('/checkout');
+  };
 
   if (cart.length === 0) {
     return (
@@ -146,18 +156,19 @@ export default function CartPage() {
                 </div>
               </div>
 
-              <Link 
-                href="/checkout"
-                className="block w-full bg-stone-900 text-white text-center py-5 rounded-xl font-bold uppercase tracking-widest hover:bg-amber-800 transition-all shadow-xl active:scale-[0.98] mb-4"
+              <button 
+                onClick={handleCheckout}
+                disabled={isRouting}
+                className="block w-full bg-stone-900 text-white text-center py-5 rounded-xl font-bold uppercase tracking-widest hover:bg-amber-800 transition-all shadow-xl active:scale-[0.98] mb-4 disabled:bg-stone-400 disabled:cursor-not-allowed"
               >
-                Proceed to Checkout
-              </Link>
+                {isRouting ? 'Loading...' : 'Proceed to Checkout'}
+              </button>
               
               <div className="flex items-center justify-center gap-2 text-stone-400">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
                 </svg>
-                <span className="text-[9px] font-bold uppercase tracking-widest uppercase">Encrypted & Secure</span>
+                <span className="text-[9px] font-bold tracking-widest uppercase">Encrypted & Secure</span>
               </div>
             </div>
           </div>
