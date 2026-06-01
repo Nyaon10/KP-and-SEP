@@ -123,8 +123,12 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <button type="submit" className="flex w-full justify-center rounded-lg bg-stone-900 py-2.5 px-4 text-sm font-semibold text-white shadow-sm hover:bg-amber-800 focus-visible:outline-amber-700 transition-colors">
-                Sign in
+              <button 
+                type="submit" 
+                disabled={loading} // 👈 Disables the button while fetching
+                className="flex w-full justify-center rounded-lg bg-stone-900 py-2.5 px-4 text-sm font-semibold text-white shadow-sm hover:bg-amber-800 focus-visible:outline-amber-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? 'Signing in...' : 'Sign in'} {/* 👈 Changes text during load */}
               </button>
             </div>
           </form>

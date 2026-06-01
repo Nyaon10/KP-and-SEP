@@ -61,7 +61,6 @@ export default function CustomerManagementPage() {
     if (!window.confirm(`Are you sure you want to PERMANENTLY delete the account for ${name}?`)) return;
 
     try {
-      // THE FIX: Pointing to the new /customers API
       const res = await fetch('/api/admin/customers', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
@@ -70,9 +69,13 @@ export default function CustomerManagementPage() {
 
       if (res.ok) {
         setCustomers(customers.filter(c => c.id !== id));
+      } else {
+        // 👇 Grab the custom error message we wrote in the backend
+        const data = await res.json();
+        alert(data.error || "Failed to delete customer.");
       }
     } catch (err) {
-      alert("Failed to delete customer.");
+      alert("Network error occurred.");
     }
   };
 
