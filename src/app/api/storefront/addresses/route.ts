@@ -1,23 +1,39 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '../../../../lib/prisma'; // Adjust dots if needed // Adjust dots if needed
+import type { NextRequest } from 'next/server';
+import { prisma } from '../../../../lib/prisma'; 
+import { jwtVerify } from 'jose';
 
-// GET: Fetch all addresses for a user
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const customer_id = searchParams.get('customer_id');
+const JWT_SECRET = process.env.JWT_SECRET || 'yoursecretkey';
+const secret = new TextEncoder().encode(JWT_SECRET);
 
-  if (!customer_id) return NextResponse.json({ error: "Missing customer ID" }, { status: 400 });
+// GET: Fetch all addresses for the logged-in user
+export async function GET(request: NextRequest) {
+  // 1. Grab the secure login token from the user's cookies
+  const tokenCookie = request.cookies.get('authToken');
+  const token = tokenCookie?.value;
+
+  if (!token) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   try {
+    // 2. Decode the token to get their REAL User ID
+    const { payload } = await jwtVerify(token, secret);
+    const customer_id = payload.userId as string;
+
+    // 3. Fetch their actual addresses using the real ID
     const addresses = await prisma.customer_addresses.findMany({
       where: { customer_id },
       orderBy: { is_default: 'desc' } // Default address shows up first!
     });
+    
     return NextResponse.json(addresses);
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch addresses" }, { status: 500 });
   }
 }
+
+// ... Keep your POST, PUT, and DELETE functions exactly the same!
 
 // POST: Create a new address
 export async function POST(request: Request) {

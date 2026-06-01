@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import prisma from '../../../../lib/prisma';
+import {prisma} from '../../../../lib/prisma';
 
 // 1. GET: Fetch all products (for the Inventory Table)
 export async function GET() {

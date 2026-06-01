@@ -14,6 +14,7 @@ const snap = new midtransClient.Snap({
   clientKey: process.env.MIDTRANS_CLIENT_KEY || '',
 });
 
+
 export async function POST(req: NextRequest) {
   // 1. Authenticate the CUSTOMER using the token cookie
   const tokenCookie = req.cookies.get('authToken');
@@ -29,7 +30,7 @@ export async function POST(req: NextRequest) {
 
     // 👇 Catch the shippingFee from the frontend body
     const body = await req.json();
-    const { items, totalAmount, shippingAddress, shippingFee } = body;
+    const { items, totalAmount, shippingAddress, shippingFee, courier } = body;
 
     if (!items || items.length === 0) {
       return NextResponse.json({ message: 'Cart is empty' }, { status: 400 });
@@ -55,8 +56,11 @@ export async function POST(req: NextRequest) {
           customer_email: customer.email,
           customer_phone: customer.phone || 'N/A',
           shipping_address: shippingAddress || 'Pending Address', 
-          total_amount: totalAmount, // This is now Subtotal + Shipping
+          total_amount: totalAmount,
           status: 'PENDING_PROCESSING',
+          // 👇 Save these to the DB so they show up on your Admin page!
+          shipping_fee: shippingFee,
+          courier: courier || 'Unknown', 
         }
       });
 
@@ -64,7 +68,8 @@ export async function POST(req: NextRequest) {
         order_id: orderId,
         product_id: item.id,
         product_name: item.name,
-        quantity: item.quantity,
+        // 👇 Safely map 'qty' from the frontend!
+        quantity: item.qty, 
         price_at_time: item.price,
       }));
 
@@ -74,11 +79,11 @@ export async function POST(req: NextRequest) {
     });
 
     // 🚨 MIDTRANS MATH FIX 🚨
-    // 1. Map the coffee items
     const midtransItemDetails = items.map((item: any) => ({
       id: item.id,
       price: item.price,
-      quantity: item.quantity,
+      // 👇 Safely map 'qty' here too!
+      quantity: item.qty, 
       name: item.name.substring(0, 50),
     }));
 
@@ -125,3 +130,4 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+

@@ -218,6 +218,7 @@ enum transactions_category {
 
 enum orders_status {
   PENDING_PROCESSING
+  PAID
   SHIPPED
   CANCELLED
 }

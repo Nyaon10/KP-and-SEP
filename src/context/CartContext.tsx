@@ -76,7 +76,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
     );
   };
 
-  const clearCart = () => setCart([]);
+  // 👇 UPDATED: Now clears the React state AND completely removes it from local storage
+  const clearCart = () => {
+    setCart([]);
+    localStorage.removeItem('wanst_cart');
+  };
 
   // 5. Auto-calculate totals
   const totalItems = cart.reduce((total, item) => total + item.quantity, 0);

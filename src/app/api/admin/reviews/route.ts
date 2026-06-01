@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import prisma from '../../../../lib/prisma';
+import {prisma} from '../../../../lib/prisma';
 
 // GET: Fetch ALL reviews across the entire store for the Admin Panel
 export async function GET() {

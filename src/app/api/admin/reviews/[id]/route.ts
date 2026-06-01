@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import prisma from '../../../../../lib/prisma';
+import {prisma} from '../../../../../lib/prisma';
 
 // DELETE: Remove a specific inappropriate review
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
